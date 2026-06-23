@@ -30,3 +30,7 @@ A few preliminary notes on the software setup:
 1. Clone lerobot and kibub_operator repositories
 2. set up the udev rules for the cams and the wrists if not alr done etc
 3. 
+
+#### TODO:
+- Add submods
+- Add instructions for computing cluster
