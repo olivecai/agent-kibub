@@ -20,7 +20,8 @@ A few preliminary notes on the software setup:
 - **Server** will refer to the Policy Server computer (CUDA device), while **Client** will refer to the Robot Client computer (Intel NUC)
 
 #### Server Software Setup:
-1. Clone this repository on the **Server** by running `cd /home/$(whoami)/; git clone TODO`.
+1. Run `cd /home/$(whoami)/`
+2. Clone the repository agent-kibub (https://github.com/olivecai/agent-kibub) on the **Server**.
 2. Initialize and update the submodule repositories by running `cd agent-kibub; git submodule init; git submodule update`
 3. Install miniconda so that you can use virtual environments to manage packages: https://www.anaconda.com/docs/getting-started/miniconda/install/linux-install
 4. Create necessary virtual enviornments: `./home/$(whoami)/agent-kibub/create_venv_server`
