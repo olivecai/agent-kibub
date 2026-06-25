@@ -286,3 +286,19 @@ When submitting a job to the gpu partition, you must specify the number of GPUs.
 job will be rejected at the submission time. To access GPUs in the gpu partition, the partition must be
 explicitly specified, as requesting GPUs alone (e.g. --gres=gpu:2) does not cause the gpu partition
 to be considered.
+
+## conda example
+```
+#!/bin/bash -l
+#SBATCH --job-name=my-conda-application
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=20
+#SBATCH --mem=60G
+#SBATCH --time=00:30:00
+#SBATCH --mail-user=user@yourinstitute.uni-hannover.de
+#SBATCH --mail-type=END
+# Activate your conda environment
+module load Miniforge3
+conda activate <your_conda_env_name>
+# Run app
+```

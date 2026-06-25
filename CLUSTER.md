@@ -265,3 +265,8 @@ The --name option must uniquely identify the kernel
 swtich kernels using menu  Kernel --> Change Kernel
 
 CONDA 
+- auto install in HOME which has quota for size and num files, so you should reset conda installation dir to subdir of group's SOFTWARE
+
+Create and use conda env on cluster:
+1. `module load Miniforge3` # do not run conda init shell
+2. `conda create -n myenv python numpy` # auto python 3.10.x but you can specify python=3.8 etc etc. IMPORTANT NOTE: use --prefix to change path to the dir $SOFTWARE/<nameofmycondadir>
