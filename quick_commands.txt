@@ -1,0 +1,8 @@
+ssh nhkwcaio@transfer.cluster.uni-hannover.de
+
+ssh nhkwcaio@login.cluster.uni-hannover.de
+
+ssh nhkwcaio@transfer.cluster.uni-hannover.de
+
+srun --pty bash -l
+
