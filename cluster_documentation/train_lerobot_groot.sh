@@ -17,12 +17,12 @@ export HF_HOME=$BIGWORK/lerobot-run/.cache/huggingface
 export HF_LEROBOT_HOME=$HF_HOME/lerobot
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export POLICY="groot"
-
+export HF_HUB_OFFLINE=1
 # MODIFY THESE VARS FOR YOUR PURPOSES!
-export REPO=pick-up-cup-left-overhead-4-2-merge
-export TASK="Pick up the cup"
 export HF_USER="oliveoil8888"
-STEPS=50
+REPO=pick-up-cup-jun28-1
+TASK="Pick up the cup"
+STEPS=50000
 BATCH_SIZE=4
 
 
