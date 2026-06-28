@@ -54,26 +54,33 @@ To do so, you need to consider a few important factors:
 You have a few different consideroptions in managing your data:
 1. Connect Storage and Computing Node through
 
-## Types of jobs
+# Running jobs on the cluster
 
-Types of Jobs
-        n scores ETC
-Serial
-Array
-OpenMP
-MPI
-GPU
+## Initial Setup (General)
 
-SETUP
+*General setup for organizing your workspace. The following instructions are intentionally vague to act as a general guide. For specific instructions on training Groot VLA models on Kibub, Ctrl+F for "Setup for Training Groot VLA models on Kibub".*
+
+1. Obtain your LUIS cluster username and password, $USER and $PASSWORD
+2. SSH into the Login Node: `ssh ${USER}@transfer.cluster.uni-hannover.de`;
+2. Create your cluster workspaces in $PROJECT and $SOFTWARE:
+    ```
+    mkdir -m 0700 $PROJECT/$USER
+    mkdir -m 0700 $SOFTWARE/$USER
+    ```
+    You can double check the existence of your newly created directories by running `ls $PROJECT` or `ls $SOFTWARE`. 
 1. Prepare your inputs; data, script, environment.
     data: input dataset
     script: a bash script that contains SLURM directives and more
     environment: a virtual environment 
-1. Obtain your LUIS cluster username and password, $USER and $PASSWORD
-2. Use the Transfer Node to transfer inputs from client local to partition $BIGWORK:`scp $USER@transfer`
-3. Use the Login Node to SSH into the partition where your inputs are located: `ssh $USER@login`
-4. Create the virtual environment for your project
-5. 
+2. Use the Transfer Node to transfer inputs from client local to the cluster:`scp location/to/local/inputs $USER@transfer.cluster.uni-hannover.de:$PROJECT/$USER`
+3. SSH into the Login Node: `ssh $USER@login.cluster.uni-hannover.de`
+4. If you would like to use conda environments: load Miniconda and then create a conda env located in your $SOFTWARE/$USER folder: `module load Miniconda3; conda create --prefix $SOFTWARE/$USER/environments/my_env`
+6. Clone necessary Github repositories: `cd $SOFTWARE/$USER; git clone repository_url`
+7. Install necessary packages into your environment. If you have a requirements.txt, you can run: `conda activate my_env; pip install -r requirements.txt`. To generate a requirements.txt of a pre-existing local env: on your local computer, activate the environment you would like to replicate and run `pip freeze > requirements.txt`. Then run `scp requirements.txt $USER@transfer.cluster.uni-hannover.de:$SOFTWARE/$USER`.
+8. You have finished the initial setup. Depending on your application, you will likely need to load other modules or export shell variables. In your future SLURM scripts, don't forget to include the line `module load X` for each module you use, including `Miniconda3`. 
+
+
+
 
 ## Preparing Inputs
 
