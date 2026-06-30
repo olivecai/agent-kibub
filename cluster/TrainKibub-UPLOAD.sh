@@ -10,11 +10,11 @@ module load Miniforge3
 conda activate $SOFTWARE/$USER/envs/lerobot
 
 hf auth login
-export HF_USER=$(hf auth whoami | awk -F': ' '/user:/ {print $2}')
+export HF_USER=$(hf auth whoami | awk -F': ' '/user:/ {print $2}') 
 export POLICY="groot"
 
-export OUTPUT_DIR=${BIGWORK}/lerobot-run/outputs/train/${POLICY}-${REPO}
+export OUTPUT_DIR=${BIGWORK}/lerobot-run/outputs/train/${HF_USER}/${POLICY}/${MODEL_REPO}
 
-hf upload ${HF_USER}/${REPO} $OUTPUT_DIR . --repo-type model
+hf upload ${HF_USER}/${MODEL_REPO} $OUTPUT_DIR . --repo-type model
 
 echo "Finished uploading the model to Huggingface."
