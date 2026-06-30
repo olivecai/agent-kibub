@@ -1,0 +1,15 @@
+[submodule "kibub_operator"]
+	path = kibub_operator
+	url = git@github.com:olivecai/kibub_operator.git
+[submodule "openclaw-embodied"]
+	path = openclaw-embodied
+	url = git@github.com:olivecai/openclaw-embodied.git
+[submodule "kibub_diff_drive"]
+	path = kibub_diff_drive
+	url = git@github.com:olivecai/kibub_diff_drive.git
+[submodule "lerobot"]
+	path = lerobot
+	url = git@github.com:olivecai/lerobot.git
+[submodule "kibub-neck-servos"]
+	path = kibub-neck-servos
+	url = git@github.com:olivecai/kibub-neck-servos.git
