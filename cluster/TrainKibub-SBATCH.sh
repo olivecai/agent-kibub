@@ -16,7 +16,7 @@ conda activate $SOFTWARE/$USER/envs/lerobot
 
 # this script will export all your variables :-) (NOTE that any SLURM directives are already passed as cmd line when you run ./TrainKibub-RUN.sh)
 # use `source` or `.` to export vars from child proc
-. /$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
+. $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
 
 echo "DATASET_REPO" $DATASET_REPO
 echo "TASK" $TASK

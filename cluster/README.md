@@ -386,7 +386,7 @@ Check the output directory for your work:
 
 *WARNING*: The following steps export shell variables, which reset when you restart your terminal, and can be overwritten. If you run `REPO=pick-up-cup` but then run `REPO=wave-hello`, REPO will lose the original value `pick-up-cup`. If you want to run multiple jobs in succession (download job1, job2, then run job1, job2, then upload job1, job2) it would be simpler to copy and paste the job1 version or job2 version of TrainKibub-VARS.sh into the cluster file TrainKibub-VARS.sh before running the download, run, upload scripts.
 
-3. Run `./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-DOWNLOAD.sh`. This script runs your TrainKibub-VARS.sh to export your modified variables, and then downloads your desired dataset.
+3. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-DOWNLOAD.sh`. This script runs your TrainKibub-VARS.sh to export your modified variables, and then downloads your desired dataset.
 
 Example:
 ```
@@ -418,15 +418,17 @@ Download complete: 100%|█| 394M/394M [00:06<00:00, 1✓ Downloaded
 Download complete: 100%|█| 394M/394M [00:06<00:00, 6
 ```
 
-4. Run `./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, runs `sbatch <passes any SLURM directives> ./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This step assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. 
+4. Run `mkdir -p $BIGWORK/lerobot-run; cd $BIGWORK/lerobot-run` 
+
+5. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, runs `sbatch <passes any SLURM directives> ./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This step assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. 
  
 Example:
 ```
-(lerobot) nhkwcaio@login02:/software/NHKW25031/nhkwcaio/agent-kibub/cluster$ ./TrainKibub-RUN.sh 
+5031/nhkwcaio/agent-kibub/cluster$ ./TrainKibub-RUN.sh 
 Executing script TrainKibub-RUN.sh
 DATASET_REPO oliveoil8888/pick-place-cube-cup-1
 TASK Pick up the cube and place it in the cup.
-STEPS 20
+STEPS 50000
 BATCH_SIZE 4
 MODEL_REPO pick-up-cup-model
 SLURM_TIME 00:05:00
@@ -434,22 +436,22 @@ OUTPUT_DIR /bigwork/nhkwcaio/lerobot-run/outputs/train/groot-pick-up-cup-model
 HF_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface
 HF_LEROBOT_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/lerobot
 Sending job with sbatch now!
-sbatch: slurm_cli_filter: WARNING:
- Memory options not specified. The DefMemPerCPU value of the partition to be allocated will be used
-sbatch: slurm_job_submit:INFO: Set partition of submitted job to stahl,ai.b300,phdgpu,isu,ai,lena,taurus,itp,smp,imes,imuk,mpp.share,fi,phd,amo,tnt,isd,iwes,enos,p4d,ai.h100,pcikoe,ainlp,gih,haku
-Submitted batch job 7492293
+sbatch: slurm_job_submit:INFO: Set partition of submitted job to: gpu
+Submitted batch job 7492368
 ```
 
 5. You can check on your job by running `squeue -l --me`; it will likely output something like:
 ```
-      squeue -l --me
-      Sun Jun 28 21:18:02 2026
-              JOBID PARTITION     NAME     USER    STATE       TIME TIME_LIMI  NODES NODELIST(REASON)
-            7479697       gpu lerobot- nhkwcaio  RUNNING       0:07   8:00:00      1 gpu-22-n009
+      (lerobot) nhkwcaio@login02:/software/NHKW25031/nhkwcaio/agent-kibub/cluster$ squeue -l --me
+Thu Jul 02 15:15:10 2026
+             JOBID PARTITION     NAME     USER    STATE       TIME TIME_LIMI  NODES NODELIST(REASON)
+           7492368       gpu lerobot- nhkwcaio  PENDING       0:00      5:00      1 (Resources)
+
 ```
 
 6. After your job has finished running (likely 5-8 hours later) you can retrieve the output models and the .out and .err files. Use your JOBID:
 ```
+cd $BIGWORK/
 echo "Check outputs of job ${JOB_ID}":
 cat lerobot-train_${JOB_ID}.out
 cat lerobot-train_${JOB_ID}.err

@@ -5,7 +5,7 @@ echo "Executing script TrainKibub-RUN.sh"
 # the only purpose of this script is to pass SLURM directives as cmd line args in the sbatch cmd
 
 # export the slurm directives set by the user
-. /$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
+. $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
 
 echo "DATASET_REPO" $DATASET_REPO
 echo "TASK" $TASK

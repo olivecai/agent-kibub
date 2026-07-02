@@ -6,7 +6,7 @@ echo "Executing script TrainKibub-DOWNLOAD.sh"
 module load Miniconda3
 conda activate $SOFTWARE/$USER/envs/lerobot
 
-. /$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
+. $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
 
 
 echo "DATASET_REPO" $DATASET_REPO

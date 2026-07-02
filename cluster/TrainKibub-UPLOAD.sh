@@ -9,7 +9,7 @@ echo "Ensure you are logged into Huggingface, and that you have exported "REPO" 
 module load Miniforge3
 conda activate $SOFTWARE/$USER/envs/lerobot
 
-. /$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
+. $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
 
 echo "DATASET_REPO" $DATASET_REPO
 echo "TASK" $TASK
