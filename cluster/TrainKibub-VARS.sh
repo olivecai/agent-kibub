@@ -4,8 +4,8 @@
 # Set these variables by using `source` or `.`: Run `. TrainKibub-VARS.sh`. Do not run `./TrainKibub-VARS.sh`, as this script is a child process that cannot set variables in its parent.
 
 # dataset variables
-export DATASET_REPO="oliveoil8888/pick-up-the-cup" # hf tag of the Huggingface dataset you would like to download for training
-export TASK="Pick up the cup" # language prompt demonstrated by the dataset
+export DATASET_REPO="oliveoil8888/pick-place-cube-cup-1" # hf tag of the Huggingface dataset you would like to download for training
+export TASK="Pick up the cube and place it in the cup." # language prompt demonstrated by the dataset
 
 # huggingface auth 
 export HF_USER="oliveoil8888" # your huggingface usertag 
