@@ -5,11 +5,13 @@ Created by: Olivia Cai
 Date: June 25 2026 - June 30 2026
 
 *Table of Contents:*
-2. Cluster computing jargon definitions
-3. Cluster computing job types
-3. Warnings
+
+1. Cluster computing jargon definitions
+2. Cluster computing job types
+3. Warnings w.r.t. to the cluster
 4. Setting up your cluster workspace (General + Training GR00t models for Kibub via Lerobot scripts)
 5. Creating & running a job (General + Training GR00t models for Kibub via Lerobot scripts)
+6. Cleaning up
 
 ## Cluster computing jargon definitions
 
@@ -38,9 +40,10 @@ See the table below for a cheatsheet differentiating job types; Serial, Job arra
 | **MPI**       | *k* processes                        | Protocol works on ≥1 CPU nodes                       | *k* CPU cores                                          | Yes, via message passing (e.g., InfiniBand, TCP).                                            | Distributed-memory parallel computing.                                                        |
 | **GPU**       | Thousands to millions of GPU threads | ≥1 CPU node with ≥1 GPU                              | 1–8 CPU cores to launch/control thousands of GPU cores | CPU cores do not share memory for GPU execution, but GPU threads communicate via GPU memory. | CPUs prepare/manage data and launch kernels; GPUs perform the massively parallel computation. |
 
-## Warnings
+## Warnings w.r.t. the cluster
 - Don't use sudo; you'll get the message: `USER is not in the sudoers file.  This incident will be reported.`
-
+- Don't save sensitive information into communal spaces unless permissions are 0700 (rwx for owner only)
+- Clean up; remove large datasets and output models from storage, since operations can fail if you run out of space for saving checkpoints
 
 # Setting up your cluster workspace
 
@@ -162,7 +165,7 @@ kibub-neck-servos  quick_commands.txt
 kibub_operator     README.md
   ```
 
-7. Load the module Miniconda3 and subsequently create a conda env with python 3.12: `module load Miniconda3; conda create --prefix $SOFTWARE/$USER/envs/lerobot python=3.12 -y`
+6. Load the module Miniconda3 and subsequently create a conda env with python 3.12: `module load Miniconda3; conda create --prefix $SOFTWARE/$USER/envs/lerobot python=3.12 -y`
 
 Example:
 ```
@@ -180,7 +183,7 @@ Module for Miniconda3, version 24.7.1-0 loaded
 #     $ conda deactivate  
 ```
 
-8. Activate the environment: `conda activate ${SOFTWARE}/${USER}/envs/lerobot`
+7. Activate the environment: `conda activate ${SOFTWARE}/${USER}/envs/lerobot`. WARNING: Ensure you are not already inside of a venv. Venv inception does not give good results.
 
 Example:
 ```
@@ -189,7 +192,7 @@ nhkwcaio@login01:/software/NHKW25031/nhkwcaio/agent-kibub$ conda activate ${SOFT
 
 ```
 
-7. Run `module load cuDNN/9.5.0.50-CUDA-12.6.0`:
+8. Run `module load cuDNN/9.5.0.50-CUDA-12.6.0`:
 
 Example:
 ```
@@ -197,7 +200,7 @@ Module for CUDA, version 12.6.0 loaded
 Module for cuDNN, version 9.5.0.50-CUDA-12.6.0 loaded
 ```
 
-8. Run `export CUDA_HOME=$EBROOTCUDA`
+9. Run `export CUDA_HOME=$EBROOTCUDA`
 
 Example:
 ```
@@ -206,18 +209,16 @@ Example:
 
 ```
 
-7. Run the following commands **in order**. Flash-attn is compiled against pre-existing packages; install packages in requirements.txt (includes torch and transformers) first. In the unlikely event that this process exceeds 30 minutes and you are kicked off the Login node, then ssh into the Transfer node and run `module load Miniconda3; conda activate ${SOFTWARE}/${USER}/envs/lerobot; module load cuDNN/9.5.0.50-CUDA-12.6.0; export CUDA_HOME=$EBROOTCUDA` and attempt the pip install commands again. Attempt the following commands one at a time, since this process has been a bit finicky for me and you may run into complications.
+10. Run the following commands **in order**. Flash-attn is compiled against pre-existing packages; install packages in requirements.txt (includes torch and transformers) first. Attempt the following commands one at a time, since this process has been a bit finicky for me and you may run into complications. This process might also take a while.
 ```
-pip install -r ${SOFTWARE}/${USER}/agent-kibub/cluster/requirements.txt #takes around 10 minutes
+pip install -r ${SOFTWARE}/${USER}/agent-kibub/cluster/requirements.txt # takes long time
 
 # 3. flash-attn (if this step fails, ensure you have loaded CUDA modules, exported CUDA_HOME, installed torch, are in the correct virtual environment and not accidentally in a venv instantiated inside another venv, and use --no-build-isolation and --no-cache-dir flags. This package can be finicky to install)
 pip install flash_attn==2.8.3 --no-cache-dir --no-build-isolation
 
 ```
 
-
-
-8. Download GR00t and Eagle base models; finetuning your policies requires these base models to be locally downloaded for the Computing Node to access during the job:
+11. Download GR00t and Eagle base models; finetuning your policies requires these base models to be locally downloaded for the Computing Node to access during the job:
 ```
 module load Miniforge3
 conda activate $SOFTWARE/$USER/envs/lerobot
@@ -232,7 +233,7 @@ hf download lerobot/eagle2hg-processor-groot-n1p5 \
   --local-dir ${HF_HOME}/lerobot/lerobot/eagle2hg-processor-groot-n1p5
 ```
 
-9. Run: `chmod a+x $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-*`
+12. Run: `chmod a+x $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-*`
 
 ## Finished!
 
@@ -312,6 +313,8 @@ If you require a pretrained online model (which is the common case if you are fi
 
 Ensure that your SLURM script attempts to search the local cache and not only the internet for your model.
 
+If you are using HF models, then run `export HF_HUB_OFFLINE=1`
+
 ### Environment
 
 In your script, before utilizing tools from your conda env:
@@ -343,7 +346,11 @@ Check the output directory for your work:
 
 1. Suppose your Huggingface dataset is saved either locally to your computer (`.cache/huggingface/lerobot/oliveoil8888/pick-up-cup`) or online at the Huggingface hub at tag `oliveoil8888/pick-up-cup`. 
 
-2. Edit the file `TrainKibub-VARS.sh` to modify the bash variables. You can either run `nano $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh` directly in the cluster Login Node shell, or edit TrainKibub-VARS.sh in a local agent-kibub repo, push those changes, and then pull those changes to the cluster Login Node. Avoid using VSCode SSH sessions on the cluster node (doing so is quite resource intensive). 
+2. You can update the Github: `cd $SOFTWARE/$USER/agent-kibub` and then `git pull; git submodule update`
+
+3. Run `chmod a+x $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-*`
+
+4. Edit the file `TrainKibub-VARS.sh` to modify the bash variables. You can either run `nano $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh` directly in the cluster Login Node shell, or edit TrainKibub-VARS.sh in a local agent-kibub repo, push those changes, and then pull those changes to the cluster Login Node. Avoid using VSCode SSH sessions on the cluster node (doing so is quite resource intensive). 
 
   An example of TrainKibub-VARS.sh:
   ```
@@ -358,11 +365,11 @@ Check the output directory for your work:
   # Run `. TrainKibub-VARS.sh`. Do not run `./TrainKibub-VARS.sh`, as this script is a child process that cannot set variables in its parent.
 
   # dataset variables
-  export DATASET_REPO="oliveoil8888/pick-place-cube-cup-1" # hf tag of the Huggingface dataset you would like to download for training
+  export DATASET_REPO="oliveoil8888/pick-up-cup" # hf tag of the Huggingface dataset you would like to download for training
   export TASK="Pick up the cube and place it in the cup." # language prompt demonstrated by the dataset
 
   # huggingface auth 
-  export HF_USER="oliveoil8888" # your huggingface usertag 
+  export HF_USER="oliveoil8888" # your own huggingface usertag, for uploading to hf later
 
   # training variables
   export STEPS=50000
@@ -384,9 +391,9 @@ Check the output directory for your work:
   export POLICY="groot"     
   ```  
 
-*WARNING*: The following steps export shell variables, which reset when you restart your terminal, and can be overwritten. If you run `REPO=pick-up-cup` but then run `REPO=wave-hello`, REPO will lose the original value `pick-up-cup`. If you want to run multiple jobs in succession (download job1, job2, then run job1, job2, then upload job1, job2) it would be simpler to copy and paste the job1 version or job2 version of TrainKibub-VARS.sh into the cluster file TrainKibub-VARS.sh before running the download, run, upload scripts.
+*WARNING*: The following steps export shell variables, which reset when you restart your terminal, and can be overwritten. If you run `REPO=pick-up-cup` but then run `REPO=wave-hello`, REPO will lose the original value `pick-up-cup`. If you want to run multiple jobs in succession (download job1, job2, then run job1, job2, then upload job1, job2) it would be simpler to copy and paste the job1 version or job2 version of TrainKibub-VARS.sh into the cluster file TrainKibub-VARS.sh before running the download, run, upload scripts. 
 
-3. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-DOWNLOAD.sh`. This script runs your TrainKibub-VARS.sh to export your modified variables, and then downloads your desired dataset.
+5. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-DOWNLOAD.sh`. This script runs your TrainKibub-VARS.sh to export your modified variables, and then downloads your desired dataset.
 
 Example:
 ```
@@ -418,9 +425,9 @@ Download complete: 100%|█| 394M/394M [00:06<00:00, 1✓ Downloaded
 Download complete: 100%|█| 394M/394M [00:06<00:00, 6
 ```
 
-4. Run `mkdir -p $BIGWORK/lerobot-run; cd $BIGWORK/lerobot-run` 
+6. Run `mkdir -p $BIGWORK/lerobot-run; cd $BIGWORK/lerobot-run` 
 
-5. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, runs `sbatch <passes any SLURM directives> ./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This step assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. 
+7. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, runs `sbatch <passes any SLURM directives> ./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This step assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. 
  
 Example:
 ```
@@ -440,7 +447,7 @@ sbatch: slurm_job_submit:INFO: Set partition of submitted job to: gpu
 Submitted batch job 7492368
 ```
 
-5. You can check on your job by running `squeue -l --me`; it will likely output something like:
+8. You can check on your job by running `squeue -l --me`; it will likely output something like:
 ```
       (lerobot) nhkwcaio@login02:/software/NHKW25031/nhkwcaio/agent-kibub/cluster$ squeue -l --me
 Thu Jul 02 15:15:10 2026
@@ -449,9 +456,9 @@ Thu Jul 02 15:15:10 2026
 
 ```
 
-6. After your job has finished running (likely 5-8 hours later) you can retrieve the output models and the .out and .err files. Use your JOBID:
+9. After your job has finished running (likely 5-8 hours later) you can retrieve the output models and the .out and .err files. Use your JOBID:
 ```
-cd $BIGWORK/
+cd $BIGWORK/lerobot-run
 echo "Check outputs of job ${JOB_ID}":
 cat lerobot-train_${JOB_ID}.out
 cat lerobot-train_${JOB_ID}.err
@@ -459,7 +466,7 @@ cat lerobot-train_${JOB_ID}.err
 ls $OUTPUT_DIR 
 ```
 
-7. Finally, you can upload your dataset to Huggingface. It is likely that you would close your terminal session in the many hours that the job would be running, so SSH back into the Login node and run `./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-UPLOAD.sh`
+10. Finally, you can upload your dataset to Huggingface. It is likely that you would close your terminal session in the many hours that the job would be running, so SSH back into the Login node and run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-UPLOAD.sh`
 
 Example:
 ```
@@ -493,3 +500,15 @@ New Data Upload               : 100%|█| 5.07GB / 5.0
 Finished uploading the model to Huggingface.
 ```
 
+## Cleaning up
+
+If you no longer need to use a dataset, then clean up your storage. Below is the list of *what* is being stored *where*:
+
+stuff | dir path | when to delete the stuff | how to delete
+--- | --- | -------- | --- | 
+.out/.err job files | $BIGWORK/lerobot-run/ | anytime after job finishes; logging from slurm | `rm *.out *.err` |
+trained models | $BIGWORK/lerobot-run/outputs/train | after uploading model to hf | `rm -r <dir path>/<model_name>` |
+recorded demonstration datasets | $BIGWORK/lerobot-run/.cache/huggingface/lerobot | after model finishes training | `rm -r <dir path>/<dataset_name>` |
+groot base model | $BIGWORK/lerobot-run/.cache/huggingface/hub/models--nvidia--GR00T-N1.5-3B | do not delete otherwise cannot train groot | `rm <dir_path>` | 
+eagle base model | $BIGWORK/lerobot-run/.cache/huggingface/lerobot/lerobot/eagle2hg-processor-groot-n1p5 | do not delete otherwise cannot train groot | `rm <dir_path>` | 
+virtual env | $SOFTWARE/$USER/envs/ | do not delete unless project is over | `conda env remove -p $SOFTWARE/$USER/envs/<env_name>`
