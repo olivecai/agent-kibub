@@ -347,13 +347,19 @@ Check the output directory for your work:
 
   An example of TrainKibub-VARS.sh:
   ```
-  #!/bin/bash
+  #!/bin/bash 
 
-  # All variables in this file must be set by the user.
+  #############################
+  # Edit the variables below  #
+  #############################
+  # The DOWNLOAD, RUN, and UPLOAD scripts source this script automatically.
+
+  # To simply set variables in the shell, run this script using `source` or `.`: 
+  # Run `. TrainKibub-VARS.sh`. Do not run `./TrainKibub-VARS.sh`, as this script is a child process that cannot set variables in its parent.
 
   # dataset variables
-  export DATASET_REPO="oliveoil8888/pick-up-the-cup" # hf tag of the Huggingface dataset you would like to download for training
-  export TASK="Pick up the cup" # language prompt demonstrated by the dataset
+  export DATASET_REPO="oliveoil8888/pick-place-cube-cup-1" # hf tag of the Huggingface dataset you would like to download for training
+  export TASK="Pick up the cube and place it in the cup." # language prompt demonstrated by the dataset
 
   # huggingface auth 
   export HF_USER="oliveoil8888" # your huggingface usertag 
@@ -362,13 +368,57 @@ Check the output directory for your work:
   export STEPS=50000
   export BATCH_SIZE=4
   export MODEL_REPO="pick-up-cup-model" #the name of your resulting model
+
+  # SLURM directives
+  export SLURM_TIME="00.05.00"
+
+  # Edit no further! Only modify vars above. Do not edit the vars below! 
+  ##########################################
+  ##########################################
+  ##########################################
+  # Do not edit any of the variables below #
+  ##########################################
+  export OUTPUT_DIR="${BIGWORK}/lerobot-run/outputs/train/${POLICY}-${MODEL_REPO}"
+  export HF_HOME=$BIGWORK/lerobot-run/.cache/huggingface
+  export HF_LEROBOT_HOME=$HF_HOME/lerobot
+  export POLICY="groot"     
   ```  
 
 *WARNING*: The following steps export shell variables, which reset when you restart your terminal, and can be overwritten. If you run `REPO=pick-up-cup` but then run `REPO=wave-hello`, REPO will lose the original value `pick-up-cup`. If you want to run multiple jobs in succession (download job1, job2, then run job1, job2, then upload job1, job2) it would be simpler to copy and paste the job1 version or job2 version of TrainKibub-VARS.sh into the cluster file TrainKibub-VARS.sh before running the download, run, upload scripts.
 
 3. Run `./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-DOWNLOAD.sh`. This script runs your TrainKibub-VARS.sh to export your modified variables, and then downloads your desired dataset.
 
-4. Run ` sbatch $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, runs your TrainKibub-VARS.sh to export your modified variables, assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. 
+Example:
+```
+(lerobot) nhkwcaio@login02:/software/NHKW25031/nhkwcaio/agent-kibub/cluster$ ./TrainKibub-DOWNLOAD.sh 
+Executing script TrainKibub-DOWNLOAD.sh
+Module for Miniconda3, version 24.7.1-0 unloaded
+Module for Miniconda3, version 24.7.1-0 loaded
+DATASET_REPO oliveoil8888/pick-place-cube-cup-1
+TASK Pick up the cube and place it in the cup.
+STEPS 20
+BATCH_SIZE 4
+MODEL_REPO pick-up-cup-model
+SLURM_TIME 00.05.00
+OUTPUT_DIR /bigwork/nhkwcaio/lerobot-run/outputs/train/groot-pick-up-cup-model
+HF_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface
+HF_LEROBOT_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/lerobot
+User is already logged in. Use `hf auth login --force` to force re-login.
+Request ...
+Send ...
+Downloading ...
+...
+
+# then after a bunch of logging...
+
+Download complete. Moving file to /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/hub/oliveoil8888/pick-place-cube-cup-1/videos/observation.images.wrist_left/chunk-000/file-000.mp4
+Fetching 11 files: 100%|█| 11/11 [00:06<00:00,  1.82
+Download complete: 100%|█| 394M/394M [00:06<00:00, 1✓ Downloaded
+  path: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/hub/oliveoil8888/pick-place-cube-cup-1
+Download complete: 100%|█| 394M/394M [00:06<00:00, 6
+```
+
+4. Run `./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, runs `sbatch <passes any SLURM directives> ./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This step assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. 
 
 5. You can check on your job by running `squeue - l --me`; it will likely output something like:
 ```
