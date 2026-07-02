@@ -232,6 +232,8 @@ hf download lerobot/eagle2hg-processor-groot-n1p5 \
   --local-dir ${HF_HOME}/lerobot/lerobot/eagle2hg-processor-groot-n1p5
 ```
 
+9. Run: `chmod a+x $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-*`
+
 ## Finished!
 
 You are now ready to train GR00t policies (& more) on the cluster!
