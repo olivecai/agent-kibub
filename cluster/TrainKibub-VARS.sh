@@ -21,7 +21,7 @@ export BATCH_SIZE=4
 export MODEL_REPO="pick-up-cup-model" #the name of your resulting model
 
 # SLURM directives
-export SLURM_TIME="00.05.00"
+export SLURM_TIME="00:05:00"
 
 # Edit no further! Only modify vars above. Do not edit the vars below! 
 ##########################################
