@@ -2,7 +2,7 @@
 
 Created by: Olivia Cai
 
-Date: June 25 2026 - June 30 2026
+Date: June 25 2026 - July 2 2026
 
 *Table of Contents:*
 
