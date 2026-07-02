@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Executing script TrainKibub-DOWNLOAD.sh"
+
 export HF_HOME=$BIGWORK/lerobot-run/.cache/huggingface
 export HF_LEROBOT_HOME=$HF_HOME/lerobot
 

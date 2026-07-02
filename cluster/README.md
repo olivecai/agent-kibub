@@ -169,7 +169,7 @@ Example:
 Module for Miniconda3, version 24.7.1-0 loaded
 
 
-#the conda env process does take a bit of time...
+# this takes around 2-4 min ...
 
 # To activate this environment, use                             
 #                                                               
@@ -199,24 +199,23 @@ Module for cuDNN, version 9.5.0.50-CUDA-12.6.0 loaded
 
 8. Run `export CUDA_HOME=$EBROOTCUDA`
 
-7. Run the following commands **in order**. Flash-attn is compiled against pre-existing packages; install torch first! Note that flash-attn can take a very long time to build. In the unlikely event that this process exceeds 30 minutes and you are kicked off the Login node, then ssh into the Transfer node and run `module load Miniconda3; conda activate ${SOFTWARE}/${USER}/envs/lerobot; module load cuDNN/9.5.0.50-CUDA-12.6.0; export CUDA_HOME=$EBROOTCUDA` and attempt the pip install commands again. Attempt the following commands one at a time, since this process has been a bit finicky for me and you may run into complications.
+Example:
 ```
-# 2. lerobot editable. This took around 
-cd ${SOFTWARE}/${USER}/agent-kibub/lerobot
-pip install -e .
+(lerobot) nhkwcaio@login01:/software/NHKW25031/nhkwcaio/agent-kibub$ echo $EBROOTCUDA
+/sw/apps/software/arch/Core/CUDA/12.6.0
 
-# 1. torch (need to install torch first so that flash-attn build can see it). This took around 5 minutes.
-pip install torch==2.7.1
-
-pip install psutil
-
-
-# 3. flash-attn (if this step fails, ensure you have loaded CUDA modules, exported CUDA_HOME, installed torch, and use --no-build-isolation flag. This package gave me a lot of grief and if you later update wheel or torch, you will likely have to reinstall flash_attn.)
-pip install flash_attn==2.8.3 --no-build-isolation
-
-# 4. the rest of the frozen requirements 
-pip install -r ${SOFTWARE}/${USER}/agent-kibub/cluster/requirements.txt
 ```
+
+7. Run the following commands **in order**. Flash-attn is compiled against pre-existing packages; install packages in requirements.txt (includes torch and transformers) first. In the unlikely event that this process exceeds 30 minutes and you are kicked off the Login node, then ssh into the Transfer node and run `module load Miniconda3; conda activate ${SOFTWARE}/${USER}/envs/lerobot; module load cuDNN/9.5.0.50-CUDA-12.6.0; export CUDA_HOME=$EBROOTCUDA` and attempt the pip install commands again. Attempt the following commands one at a time, since this process has been a bit finicky for me and you may run into complications.
+```
+pip install -r ${SOFTWARE}/${USER}/agent-kibub/cluster/requirements.txt #takes around 10 minutes
+
+# 3. flash-attn (if this step fails, ensure you have loaded CUDA modules, exported CUDA_HOME, installed torch, are in the correct virtual environment and not accidentally in a venv instantiated inside another venv, and use --no-build-isolation and --no-cache-dir flags. This package can be finicky to install)
+pip install flash_attn==2.8.3 --no-cache-dir --no-build-isolation
+
+```
+
+
 
 8. Download GR00t and Eagle base models; finetuning your policies requires these base models to be locally downloaded for the Computing Node to access during the job:
 ```
@@ -231,7 +230,6 @@ hf download nvidia/GR00T-N1.5-3B \
 
 hf download lerobot/eagle2hg-processor-groot-n1p5 \
   --local-dir ${HF_HOME}/lerobot/lerobot/eagle2hg-processor-groot-n1p5
-
 ```
 
 ## Finished!
@@ -364,7 +362,7 @@ Check the output directory for your work:
   export MODEL_REPO="pick-up-cup-model" #the name of your resulting model
   ```  
 
-*WARNING: The following steps export shell variables, which reset when you restart your terminal, and can be overwritten. If you run `REPO=pick-up-cup` but then run `REPO=wave-hello`, REPO will lose the original value `pick-up-cup`.*
+*WARNING*: The following steps export shell variables, which reset when you restart your terminal, and can be overwritten. If you run `REPO=pick-up-cup` but then run `REPO=wave-hello`, REPO will lose the original value `pick-up-cup`. If you want to run multiple jobs in succession (download job1, job2, then run job1, job2, then upload job1, job2) it would be simpler to copy and paste the job1 version or job2 version of TrainKibub-VARS.sh into the cluster file TrainKibub-VARS.sh before running the download, run, upload scripts.
 
 3. Run `./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-DOWNLOAD.sh`. This script runs your TrainKibub-VARS.sh to export your modified variables, and then downloads your desired dataset.
 

@@ -15,5 +15,6 @@ export STEPS=50000
 export BATCH_SIZE=4
 export MODEL_REPO="pick-up-cup-model" #the name of your resulting model
 
-# CLURM directives
+# SLURM directives
+export SLURM_TIME="00.05.00"
 

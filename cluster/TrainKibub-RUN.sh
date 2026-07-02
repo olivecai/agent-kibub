@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:a100:1
 #SBATCH --mem=64G
-#SBATCH --time=
+#SBATCH --time=${SLURM_TIME}
 #SBATCH --output=lerobot-train_%j.out
 #SBATCH --error=lerobot-train_%j.err
 cd $SLURM_SUBMIT_DIR 
