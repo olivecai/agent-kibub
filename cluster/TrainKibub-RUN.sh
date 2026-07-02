@@ -13,24 +13,39 @@ cd $SLURM_SUBMIT_DIR
 mkdir -p lerobot-run && cd lerobot-run
 module load Miniforge3
 conda activate $SOFTWARE/$USER/envs/lerobot
-export HF_HOME=$BIGWORK/lerobot-run/.cache/huggingface
-export HF_LEROBOT_HOME=$HF_HOME/lerobot
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-export POLICY="groot"
 
-# then specify HF_HUB_OFFLINE=1 to signal that models/datasets will be saved in the local cache
-export HF_HUB_OFFLINE=1
 
 # this script will export all your variables :-)
 # use `source` or `.` to export vars from child proc
 . /$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
+
+echo "DATASET_REPO" $DATASET_REPO
+echo "TASK" $TASK
+
+# training variables
+echo "STEPS" $STEPS
+echo "BATCH_SIZE" $BATCH_SIZE
+echo "MODEL_REPO" $MODEL_REPO
+
+# SLURM directives
+echo "SLURM_TIME" $SLURM_TIME
+
+echo OUTPUT_DIR $OUTPUT_DIR
+
+echo HF_HOME: $HF_HOME
+echo HF_LEROBOT_HOME: $HF_LEROBOT_HOME
+
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+# then specify HF_HUB_OFFLINE=1 to signal that models/datasets will be saved in the local cache
+export HF_HUB_OFFLINE=1
+
 
 # NOTE: dataset AND base model already downloaded on login node before job submission:
 #   hf download ${HF_USER}/${REPO} --repo-type dataset --local-dir ${HF_LEROBOT_HOME}/${HF_USER}/${REPO}
 #   hf download nvidia/GR00T-N1.5-3B --local-dir ${HF_HOME}/hub/models--nvidia--GR00T-N1.5-3B
 
 # this is where the model checkpoints will be saved
-export OUTPUT_DIR=${BIGWORK}/lerobot-run/outputs/train/${POLICY}-${MODEL_REPO}
+
 
 srun lerobot-train \
   --dataset.repo_id=${DATASET_REPO} \

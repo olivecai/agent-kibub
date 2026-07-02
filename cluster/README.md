@@ -380,10 +380,44 @@ Check the output directory for your work:
 
 6. After your job has finished running (likely 5-8 hours later) you can retrieve the output models and the .out and .err files. Use your JOBID:
 ```
+echo "Check outputs of job ${JOB_ID}":
 cat lerobot-train_${JOB_ID}.out
 cat lerobot-train_${JOB_ID}.err
 
-ls ${BIGWORK}/lerobot-run/outputs/train/${HF_USER}/${POLICY}/${MODEL_REPO}
+ls $OUTPUT_DIR 
 ```
-7. Finally, you can upload your dataset to Huggingface by running `./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-UPLOAD.sh`
+
+7. Finally, you can upload your dataset to Huggingface. It is likely that you would close your terminal session in the many hours that the job would be running, so SSH back into the Login node and run `./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-UPLOAD.sh`
+
+Example:
+```
+(lerobot) nhkwcaio@login02:/software/NHKW25031/nhkwcaio/agent-kibub/cluster$ ./TrainKibub-UPLOAD.sh 
+Executing script TrainKibub-UPLOAD.sh
+This script is used for uploading your trained model to Huggingface. Run this script on the Login node.
+Ensure you are logged into Huggingface, and that you have exported REPO and POLICY beforehand.
+Module for Miniforge3, version 25.3.0-3 unloaded
+Module for Miniforge3, version 25.3.0-3 loaded
+User is already logged in. Use `hf auth login --force` to force re-login.
+HF_USER oliveoil8888
+DATASET_REPO oliveoil8888/pick-place-cube-cup-1
+TASK Pick up the cube and place it in the cup.
+HF_USER oliveoil8888
+STEPS 50000
+BATCH_SIZE 4
+MODEL_REPO pick-up-cup-jun28-1
+SLURM_TIME 08.00.00
+OUTPUT_DIR /bigwork/nhkwcaio/lerobot-run/outputs/train/groot-pick-up-cup-jun28-1
+Start hashing 12 files.
+Finished hashing 12 files.
+Processing Files (5 / 5)      : 100%|█| 9.72GB / 9.7
+New Data Upload               : 100%|█| 5.07GB / 5.0
+  ...timizer_state.safetensors: 100%|█| 4.28GB / 4.2
+  ...d_model/model.safetensors: 100%|█| 5.45GB / 5.4
+  ...ate/rng_state.safetensors: 100%|█| 15.7kB / 15.
+  ...ack_inputs_v3.safetensors: 100%|█| 11.9kB / 11.
+  ...nnormalize_v1.safetensors: 100%|█| 11.9kB / 11.
+✓ Uploaded
+  url: https://huggingface.co/oliveoil8888/pick-up-cup-jun28-1/commit/aa596fc3f9f9b6790a23b0d2ef49d40265bbd544
+Finished uploading the model to Huggingface.
+```
 

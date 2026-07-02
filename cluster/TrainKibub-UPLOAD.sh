@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/bash 
 
-# run this on a Login or Transfer Node
+# run this on a Login Node (Transfer Node does not have access to $SOFTWARE)
 echo "Executing script TrainKibub-UPLOAD.sh"
 
 echo "This script is used for uploading your trained model to Huggingface. Run this script on the Login node."
@@ -9,18 +9,10 @@ echo "Ensure you are logged into Huggingface, and that you have exported "REPO" 
 module load Miniforge3
 conda activate $SOFTWARE/$USER/envs/lerobot
 
-hf auth login
-export HF_USER=$(hf auth whoami | awk -F': ' '/user:/ {print $2}') 
-export POLICY="groot"
-echo HF_USER $HF_USER
-
 . /$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
 
 echo "DATASET_REPO" $DATASET_REPO
 echo "TASK" $TASK
-
-# huggingface auth 
-echo "HF_USER" $HF_USER
 
 # training variables
 echo "STEPS" $STEPS
@@ -30,9 +22,15 @@ echo "MODEL_REPO" $MODEL_REPO
 # SLURM directives
 echo "SLURM_TIME" $SLURM_TIME
 
-export OUTPUT_DIR=${BIGWORK}/lerobot-run/outputs/train/${POLICY}-${MODEL_REPO}
-
 echo OUTPUT_DIR $OUTPUT_DIR
+
+echo HF_HOME: $HF_HOME
+echo HF_LEROBOT_HOME: $HF_LEROBOT_HOME
+
+hf auth login
+export HF_USER=$(hf auth whoami | awk -F': ' '/user:/ {print $2}') 
+
+echo HF_USER $HF_USER
 
 hf upload ${HF_USER}/${MODEL_REPO} $OUTPUT_DIR . --repo-type model
 

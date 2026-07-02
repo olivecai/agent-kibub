@@ -1,17 +1,29 @@
-#!/bin/bash
+#!/bin/bash 
 
+# run this on a Login Node (Transfer Node does not have access to $SOFTWARE)
 echo "Executing script TrainKibub-DOWNLOAD.sh"
-
-export HF_HOME=$BIGWORK/lerobot-run/.cache/huggingface
-export HF_LEROBOT_HOME=$HF_HOME/lerobot
-
-echo HF_HOME: $HF_HOME
-echo HF_LEROBOT_HOME: $HF_LEROBOT_HOME
 
 module load Miniconda3
 conda activate $SOFTWARE/$USER/envs/lerobot
 
 . /$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
+
+
+echo "DATASET_REPO" $DATASET_REPO
+echo "TASK" $TASK
+
+# training variables
+echo "STEPS" $STEPS
+echo "BATCH_SIZE" $BATCH_SIZE
+echo "MODEL_REPO" $MODEL_REPO
+
+# SLURM directives
+echo "SLURM_TIME" $SLURM_TIME
+
+echo OUTPUT_DIR $OUTPUT_DIR
+
+echo HF_HOME: $HF_HOME
+echo HF_LEROBOT_HOME: $HF_LEROBOT_HOME
 
 hf auth login
 
