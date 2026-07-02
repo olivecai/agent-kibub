@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:a100:1
 #SBATCH --mem=64G
-#SBATCH --time=08:00:00
+#SBATCH --time=
 #SBATCH --output=lerobot-train_%j.out
 #SBATCH --error=lerobot-train_%j.err
 cd $SLURM_SUBMIT_DIR 
@@ -22,7 +22,8 @@ export POLICY="groot"
 export HF_HUB_OFFLINE=1
 
 # this script will export all your variables :-)
-./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
+# use `source` or `.` to export vars from child proc
+. /$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
 
 # NOTE: dataset AND base model already downloaded on login node before job submission:
 #   hf download ${HF_USER}/${REPO} --repo-type dataset --local-dir ${HF_LEROBOT_HOME}/${HF_USER}/${REPO}

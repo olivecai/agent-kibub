@@ -1,26 +1,15 @@
 # Cluster Computing Intro
 
 Created by: Olivia Cai
+
 Date: June 25 2026 - June 30 2026
 
 *Table of Contents:*
-1. "Explain Like I'm Five" for Cluster Computing
 2. Cluster computing jargon definitions
 3. Cluster computing job types
+3. Warnings
 4. Setting up your cluster workspace (General + Training GR00t models for Kibub via Lerobot scripts)
 5. Creating & running a job (General + Training GR00t models for Kibub via Lerobot scripts)
-
-## "Explain Like I'm Five" for Cluster Computing
-
-There exists a huge kitchen with a bunch of microwaves, ovens, stovetops, and more.
-This kitchen is capable of cooking multiple meals at once.
-
-This kitchen is shared between multiple families (projects). Imagine what would happen if there were no rules in this kitchen (cluster): ingredients (datasets) and recipes (programs) would be left out, taking up counter space (GB of storage). You could steal someone else's ingredients, remove someone's meal from the stovetop to cook your own food (kill a process to free up a CPU for your own job), or impatiently watch as someone uses the largest microwave to heat up a tiny breadroll--even though the smaller microwaves were available! 
-
-Cluster computing is a way to efficiently organize users in a kitchen:
-- Users need to specify the duration and resources they'll need for their project in advance. Violating this time results in your half-cooked food being removed from the stovetop for the next pot.
-- If the kitchen is busy, you have to wait in queue, where your request is evaluated automatically based on the resources and time you specify.
-- The kitchen is for cooking, not storage; if you have a surplus of 500 kg of potatoes, you'll have to store it at home (local) or in your family's storage space (the designated storage space of your project). 
 
 ## Cluster computing jargon definitions
 
@@ -49,11 +38,15 @@ See the table below for a cheatsheet differentiating job types; Serial, Job arra
 | **MPI**       | *k* processes                        | Protocol works on ≥1 CPU nodes                       | *k* CPU cores                                          | Yes, via message passing (e.g., InfiniBand, TCP).                                            | Distributed-memory parallel computing.                                                        |
 | **GPU**       | Thousands to millions of GPU threads | ≥1 CPU node with ≥1 GPU                              | 1–8 CPU cores to launch/control thousands of GPU cores | CPU cores do not share memory for GPU execution, but GPU threads communicate via GPU memory. | CPUs prepare/manage data and launch kernels; GPUs perform the massively parallel computation. |
 
+## Warnings
+- Don't use sudo; you'll get the message: `USER is not in the sudoers file.  This incident will be reported.`
+
+
 # Setting up your cluster workspace
 
 ## Initial Setup (General)
 
-*General setup for organizing your workspace. The following instructions are intentionally vague to act as a general guide. For specific instructions on training Groot VLA models on Kibub, Ctrl+F for "Training GR00t models for Kibub via Lerobot scripts".*
+*General setup for organizing your workspace. The following instructions are intentionally vague to act as a general guide. Skip this section and Ctrl+F "Initial Setup (Training GR00t models for Kibub via Lerobot scripts)" for specific instructions on training Groot VLA models on Kibub.*
 
 1. Obtain your LUIS cluster username and password, $USER and $PASSWORD
 2. SSH into the Login Node: `ssh ${USER}@transfer.cluster.uni-hannover.de` and copy in your PASSWORD when prompted (for security reasons, the shell does not echo the typical "*" or "#" symbols during password input)
@@ -95,27 +88,88 @@ Warning: Permanently added 'login.cluster.uni-hannover.de' (ED25519) to the list
 # Enter your password and you should enter the cluster!
 ```
 
-4. Create your workspaces in $PROJECT and $SOFTWARE:
+2. Create your workspaces in $PROJECT and $SOFTWARE:
 ```
 mkdir -m 0700 ${PROJECT}/${USER}
 mkdir -m 0700 ${SOFTWARE}/${USER}
 ```
 You can double check the existence of your newly created directories by running `ls $PROJECT` or `ls $SOFTWARE`.
 
-5. Clone agent-kibub into `${SOFTWARE}/${USER}` by running the following: `cd ${SOFTWARE}/${USER} ; git clone https://github.com/olivecai/agent-kibub.git`. (agent-kibub is the master repository for all repositories needed to control, train, and evaluate both VLAs and the OpenClaw agent on Kibub)
+3. Authenticate into Github via SSH:
 
-6. Initialize/update the git submodules:
+  You can safely store your SSH key in ${HOME} on the cluster, since only the owner has rwx permissions(double check this by running `ls -ld $HOME`). Generate the SSH key: `ssh-keygen -t ed25519 -C "your_github_email@domain.ca"; cat ~/.ssh/id_ed25519.pub`. Copy your public key. On the Github site https://github.com/settings/keys: Settings > Access > SSH and GPG keys > New SSH Key > let Title == something like "LUH cluster", Key type == Authentication, and paste in the copied output from `cat ~/.ssh/id_ed25519.pub`. 
+
+    Example:
+```
+  nhkwcaio@login01:/software/NHKW25031/nhkwcaio/agent-kibub$ ls -ld $HOME
+drwx------ 11 nhkwcaio NHKW25031 4096 Jul  2 10:21 /home/nhkwcaio
+
+  nhkwcaio@login01:/software/NHKW25031/nhkwcaio/agent-kibub$ ssh-keygen -t ed25519 -C "ocai@ualberta.ca"
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/nhkwcaio/.ssh/id_ed25519): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/nhkwcaio/.ssh/id_ed25519
+Your public key has been saved in /home/nhkwcaio/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:k6aa+T+Xz/cFwzJ3ZN8K6GAel6SKkrk6XougKmvrFSQ ocai@ualberta.ca
+The key's randomart image is:
++--[ED25519 256]--+
+|                 |
+|                 |
+| E .      .     o|
+|  o      + o . oo|
+|   .    S + + = +|
+|   o.. * *   = = |
+|. +o. o . ..  . .|
+|=.+o.+  . o.  . .|
+|@Oo.+....o .o. ..|
++----[SHA256]-----+
+nhkwcaio@login01:/software/NHKW25031/nhkwcaio/agent-kibub$ cat ~/.ssh/id_ed25519.pub #this outputs your public key
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGdpYufWFsxTlZiRYZT/DG5C3YSSS6j+pvAVhxuj1J49 ocai@ualberta.ca
+
+# then, login to Github and add your SSH key for the cluster device.
+```
+
+4. Clone agent-kibub into `${SOFTWARE}/${USER}` by running the following: `cd ${SOFTWARE}/${USER}; git clone https://github.com/olivecai/agent-kibub.git`. (agent-kibub is the master repository for all repositories needed to control, train, and evaluate both VLAs and the OpenClaw agent on Kibub)
+
+5. Initialize/update the git submodules. Expect this process to be slower than on your personal PC:
 ```
 cd agent-kibub
 git submodule init
 git submodule update
 ```
 
-7. Create a conda env with python 3.12: `conda create --prefix $SOFTWARE/$USER/envs/lerobot python=3.12 -y`
+  Example:
+  ```
+nhkwcaio@login01:/software/NHKW25031/nhkwcaio$ cd agent-kibub
+git submodule init
+git submodule update
+Cloning into '/software/NHKW25031/nhkwcaio/agent-kibub/kibub-neck-servos'...
+Cloning into '/software/NHKW25031/nhkwcaio/agent-kibub/kibub_diff_drive'...
+Cloning into '/software/NHKW25031/nhkwcaio/agent-kibub/kibub_operator'...
+Cloning into '/software/NHKW25031/nhkwcaio/agent-kibub/lerobot'...
+Cloning into '/software/NHKW25031/nhkwcaio/agent-kibub/openclaw-embodied'...
+Submodule path 'kibub-neck-servos': checked out '1cf39ca7da8581378ce61b0300dc43eb97fa65c8'
+Submodule path 'kibub_diff_drive': checked out '0cde00a1e4711ca995e222eaf0e162a1dc784def'
+Submodule path 'kibub_operator': checked out '4f6f7751a4e58a433b302625c8ab0a3efdd3f6e3'
+Submodule path 'lerobot': checked out '6e6a3b963c5f0425a380daf21a40c17f82f50d06'
+Submodule path 'openclaw-embodied': checked out '410d05fec9794f33d22340ce7ad5bd937dc218ca'
+nhkwcaio@login01:/software/NHKW25031/nhkwcaio/agent-kibub$ ls
+cluster            lerobot
+kibub_diff_drive   openclaw-embodied
+kibub-neck-servos  quick_commands.txt
+kibub_operator     README.md
+  ```
 
-Output example after a few minutes:
+7. Load the module Miniconda3 and subsequently create a conda env with python 3.12: `module load Miniconda3; conda create --prefix $SOFTWARE/$USER/envs/lerobot python=3.12 -y`
+
+Example:
 ```
-... #this process does take a bit of time...
+Module for Miniconda3, version 24.7.1-0 loaded
+
+
+#the conda env process does take a bit of time...
 
 # To activate this environment, use                             
 #                                                               
@@ -128,26 +182,40 @@ Output example after a few minutes:
 
 8. Activate the environment: `conda activate ${SOFTWARE}/${USER}/envs/lerobot`
 
+Example:
+```
+nhkwcaio@login01:/software/NHKW25031/nhkwcaio/agent-kibub$ conda activate ${SOFTWARE}/${USER}/envs/lerobot
+(lerobot) nhkwcaio@login01:/software/NHKW25031/nhkwcaio/agent-kibub$ 
+
+```
+
 7. Run `module load cuDNN/9.5.0.50-CUDA-12.6.0`:
+
+Example:
+```
 Module for CUDA, version 12.6.0 loaded
 Module for cuDNN, version 9.5.0.50-CUDA-12.6.0 loaded
+```
 
 8. Run `export CUDA_HOME=$EBROOTCUDA`
 
-7. Run the following commands **in order**. Flash-attn is compiled against pre-existing packages and can be finicky to install, so it is imperative to install torch first!
+7. Run the following commands **in order**. Flash-attn is compiled against pre-existing packages; install torch first! Note that flash-attn can take a very long time to build. In the unlikely event that this process exceeds 30 minutes and you are kicked off the Login node, then ssh into the Transfer node and run `module load Miniconda3; conda activate ${SOFTWARE}/${USER}/envs/lerobot; module load cuDNN/9.5.0.50-CUDA-12.6.0; export CUDA_HOME=$EBROOTCUDA` and attempt the pip install commands again. Attempt the following commands one at a time, since this process has been a bit finicky for me and you may run into complications.
 ```
-# 1. torch (need to install torch first so that flash-attn build can see it)
-pip install torch==2.7.1
-
-# 2. lerobot editable (install from within the forked lerobot submod in agent-kibub/)
-cd ${SOFTWARE}/${USER}/agent-kibub
+# 2. lerobot editable. This took around 
+cd ${SOFTWARE}/${USER}/agent-kibub/lerobot
 pip install -e .
 
-# 3. flash-attn (if this step fails, ensure you have loaded CUDA modules, exported CUDA_HOME, installed torch, and use --no-build-isolation flag)
+# 1. torch (need to install torch first so that flash-attn build can see it). This took around 5 minutes.
+pip install torch==2.7.1
+
+pip install psutil
+
+
+# 3. flash-attn (if this step fails, ensure you have loaded CUDA modules, exported CUDA_HOME, installed torch, and use --no-build-isolation flag. This package gave me a lot of grief and if you later update wheel or torch, you will likely have to reinstall flash_attn.)
 pip install flash_attn==2.8.3 --no-build-isolation
 
 # 4. the rest of the frozen requirements 
-pip install -r ${SOFTWARE}/${USER}/agent-kibub/cluster/requirements-cluster.txt
+pip install -r ${SOFTWARE}/${USER}/agent-kibub/cluster/requirements.txt
 ```
 
 8. Download GR00t and Eagle base models; finetuning your policies requires these base models to be locally downloaded for the Computing Node to access during the job:
@@ -174,7 +242,7 @@ You are now ready to train GR00t policies (& more) on the cluster!
 
 ## Creating & running a job (General)
 
-*Also see Creating & running a job (Training GR00t models for Kibub via Lerobot scripts)*
+*Skip this section and Ctrl+F "Creating & running a job (Training GR00t models for Kibub via Lerobot scripts)" for specific instructions on training Groot VLA models on Kibub.*
 
 Requirements:
 

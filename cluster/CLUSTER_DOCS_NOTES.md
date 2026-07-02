@@ -1,6 +1,9 @@
 # Computing Cluster Notes
 
-Notes from reading the LUIS HPC Cluster Documentation https://docs.cluster.uni-hannover.de/doku.php/start 
+Created by: Olivia Cai
+Date: June 25 2026 
+
+*Notes from reading the LUIS HPC Cluster Documentation https://docs.cluster.uni-hannover.de/doku.php/start*
 
 ## Prerequisites:
 - username and password

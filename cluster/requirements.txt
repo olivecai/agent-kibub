@@ -30,7 +30,6 @@ evdev==1.9.3
 Farama-Notifications==0.0.6
 fastapi==0.136.3
 filelock==3.29.0
-flash_attn==2.8.3
 fonttools==4.63.0
 frozenlist==1.8.0
 fsspec==2025.3.0

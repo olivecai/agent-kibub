@@ -6,7 +6,7 @@ export HF_LEROBOT_HOME=$HF_HOME/lerobot
 module load Miniconda3
 conda activate $SOFTWARE/$USER/envs/lerobot
 
-./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
+. /$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh
 
 hf auth login
 
