@@ -4,7 +4,7 @@
 echo "Executing script TrainKibub-UPLOAD.sh"
 
 echo "This script is used for uploading your trained model to Huggingface. Run this script on the Login node."
-echo "Ensure you are logged into Huggingface, and that you have exported "REPO" and "POLICY" beforehand.
+echo "Ensure you are logged into Huggingface, and that you have exported "REPO" and "POLICY" beforehand."
 
 module load Miniforge3
 conda activate $SOFTWARE/$USER/envs/lerobot
@@ -30,7 +30,7 @@ echo "MODEL_REPO" $MODEL_REPO
 # SLURM directives
 echo "SLURM_TIME" $SLURM_TIME
 
-export OUTPUT_DIR=${BIGWORK}/lerobot-run/outputs/train/${HF_USER}/${POLICY}-${MODEL_REPO}
+export OUTPUT_DIR=${BIGWORK}/lerobot-run/outputs/train/${POLICY}-${MODEL_REPO}
 
 echo OUTPUT_DIR $OUTPUT_DIR
 

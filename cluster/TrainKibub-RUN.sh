@@ -30,7 +30,7 @@ export HF_HUB_OFFLINE=1
 #   hf download nvidia/GR00T-N1.5-3B --local-dir ${HF_HOME}/hub/models--nvidia--GR00T-N1.5-3B
 
 # this is where the model checkpoints will be saved
-export OUTPUT_DIR=${BIGWORK}/lerobot-run/outputs/train/${HF_USER}/${POLICY}-${MODEL_REPO}
+export OUTPUT_DIR=${BIGWORK}/lerobot-run/outputs/train/${POLICY}-${MODEL_REPO}
 
 srun lerobot-train \
   --dataset.repo_id=${DATASET_REPO} \
