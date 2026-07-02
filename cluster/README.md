@@ -419,8 +419,28 @@ Download complete: 100%|█| 394M/394M [00:06<00:00, 6
 ```
 
 4. Run `./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, runs `sbatch <passes any SLURM directives> ./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This step assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. 
+ 
+Example:
+```
+(lerobot) nhkwcaio@login02:/software/NHKW25031/nhkwcaio/agent-kibub/cluster$ ./TrainKibub-RUN.sh 
+Executing script TrainKibub-RUN.sh
+DATASET_REPO oliveoil8888/pick-place-cube-cup-1
+TASK Pick up the cube and place it in the cup.
+STEPS 20
+BATCH_SIZE 4
+MODEL_REPO pick-up-cup-model
+SLURM_TIME 00:05:00
+OUTPUT_DIR /bigwork/nhkwcaio/lerobot-run/outputs/train/groot-pick-up-cup-model
+HF_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface
+HF_LEROBOT_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/lerobot
+Sending job with sbatch now!
+sbatch: slurm_cli_filter: WARNING:
+ Memory options not specified. The DefMemPerCPU value of the partition to be allocated will be used
+sbatch: slurm_job_submit:INFO: Set partition of submitted job to stahl,ai.b300,phdgpu,isu,ai,lena,taurus,itp,smp,imes,imuk,mpp.share,fi,phd,amo,tnt,isd,iwes,enos,p4d,ai.h100,pcikoe,ainlp,gih,haku
+Submitted batch job 7492293
+```
 
-5. You can check on your job by running `squeue - l --me`; it will likely output something like:
+5. You can check on your job by running `squeue -l --me`; it will likely output something like:
 ```
       squeue -l --me
       Sun Jun 28 21:18:02 2026

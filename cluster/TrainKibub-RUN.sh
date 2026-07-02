@@ -26,4 +26,4 @@ echo HF_LEROBOT_HOME: $HF_LEROBOT_HOME
 echo "Sending job with sbatch now!"
 
 # then pass them as cmd line args 
-sbatch --time="$SLURM_TIME" $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh
+sbatch --time="$SLURM_TIME" $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-SBATCH.sh
