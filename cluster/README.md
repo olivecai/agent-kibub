@@ -211,9 +211,12 @@ Example:
 
 10. Run the following commands **in order**. Flash-attn is compiled against pre-existing packages; install packages in requirements.txt (includes torch and transformers) first. Attempt the following commands one at a time, since this process has been a bit finicky for me and you may run into complications. This process might also take a while.
 ```
-pip install -r ${SOFTWARE}/${USER}/agent-kibub/cluster/requirements.txt # takes long time
+# might take 10-20 min:
 
-# 3. flash-attn (if this step fails, ensure you have loaded CUDA modules, exported CUDA_HOME, installed torch, are in the correct virtual environment and not accidentally in a venv instantiated inside another venv, and use --no-build-isolation and --no-cache-dir flags. This package can be finicky to install)
+pip install -r ${SOFTWARE}/${USER}/agent-kibub/cluster/requirements.txt 
+
+# flash-attn (if this step fails, ensure you have loaded CUDA modules, exported CUDA_HOME, installed torch, are in the correct virtual environment and not accidentally in a venv instantiated inside another venv, and use --no-build-isolation and --no-cache-dir flags. This package can be finicky to install)
+
 pip install flash_attn==2.8.3 --no-cache-dir --no-build-isolation
 
 ```
