@@ -32,7 +32,7 @@ A few preliminary notes on the software setup:
 *Presumably Kibub has already been set up but these steps will be documented for redundancy*
 
 1. Launch a Kibub SSH session: `ssh kibub@kibub`. 
-2. Clone the following three repositories in /home/kibub/: kibub-neck-servos (https://github.com/olivecai/kibub-neck-servos), kibub_diff_drive (https://github.com/olivecai/kibub_diff_drive), and kibub_operator (https://github.com/olivecai/kibub_operator). 
+2. Clone the following three repositories in /home/kibub/: kibub-neck-servos (https://github.com/olivecai/kibub-neck-servos), kibub_diff_drive (https://github.com/olivecai/kibub_diff_drive), and kibub_operator (https://github.com/olivecai/kibub_operator). If they are already cloned, cd into each of them and `git pull origin main`
 3. Run `conda create env -n lerobot -y; conda activate lerobot`
 4. Run `cd kibub_operator; pip install -r client-requirements.txt`
 5. Check which of the following devices are enumerated upon running `ls /dev`. Attempt to plug in the follower and leaders arms, and all the cameras which you would like to use during rollout. The table below describes the hardware and when it is needed. 
@@ -56,9 +56,13 @@ top_realsense_depth | neck realsense camera depth channel | optional: vla record
 overhead_realsense | overhead birdeye realsense camera color channel | optional: vla record, vla rollout, agent rollout |
 diff_drive | differential wheels | agent rollout |
 
-If you are missing a symlink, or add another peripheral, add the symlink:
+If you are missing a symlink, or add another peripheral, **ADD IT AS A SYMLINK** to avoid the unfortunate TODOTODO
 
 ```
+sudo nano /etc/udev/rules.d/99-top-cameras.rules
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
 
 ```
 
