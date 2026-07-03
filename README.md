@@ -1,6 +1,11 @@
 # agent-kibub
 'Agent Kibub' refers to the OpenClaw agentic system embodied on a dual arm, differential drive mobile robot system 'Kibub'.  This master repository contains the submodules needed to teleop, train, inference on Kibub, and the agent setup for OpenClaw.
 
+Example:
+```
+
+```
+
 ## Setup
 
 ### Hardware prerequisites:
@@ -23,13 +28,93 @@ A few preliminary notes on the software setup:
 ### Server Software Setup:
 1. Run `cd /home/$(whoami)/` (or wherever you'd like to put this repo)
 2. Clone the repository agent-kibub (https://github.com/olivecai/agent-kibub) on the **Server**.
-2. Initialize and update the submodule repositories by running `cd agent-kibub; git submodule init; git submodule update`
+2. Initialize and update the submodule repositories by running `cd agent-kibub; git submodule init; git submodule update; git pull origin main`
+
+Example:
+```
+(base) ocai@cowmatch005:~/agent-kibub$ git submodule init
+(base) ocai@cowmatch005:~/agent-kibub$ git submodule update
+Cloning into '/home/ocai/agent-kibub/kibub-neck-servos'...
+Cloning into '/home/ocai/agent-kibub/kibub_diff_drive'...
+Cloning into '/home/ocai/agent-kibub/kibub_operator'...
+Cloning into '/home/ocai/agent-kibub/lerobot'...
+Cloning into '/home/ocai/agent-kibub/openclaw-embodied'...
+Submodule path 'kibub-neck-servos': checked out '1cf39ca7da8581378ce61b0300dc43eb97fa65c8'
+Submodule path 'kibub_diff_drive': checked out '0cde00a1e4711ca995e222eaf0e162a1dc784def'
+Submodule path 'kibub_operator': checked out '4f6f7751a4e58a433b302625c8ab0a3efdd3f6e3'
+Submodule path 'lerobot': checked out '6e6a3b963c5f0425a380daf21a40c17f82f50d06'
+Submodule path 'openclaw-embodied': checked out '410d05fec9794f33d22340ce7ad5bd937dc218ca'
+(base) ocai@cowmatch005:~/agent-kibub$ git pull
+remote: Enumerating objects: 5, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 1), reused 3 (delta 1), pack-reused 0 (from 0)
+Unpacking objects: 100% (3/3), 4.03 KiB | 4.03 MiB/s, done.
+From github.com:olivecai/agent-kibub
+   a80d9c9..435ed53  main       -> origin/main
+Updating a80d9c9..435ed53
+Fast-forward
+ README.md      | 151 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------
+ kibub_operator |   2 +-
+```
+
 3. Install miniconda so that you can use virtual environments to manage packages: https://www.anaconda.com/docs/getting-started/miniconda/install/linux-install (`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh` and after it has installed, `source ~/.bashrc`)
-4. Run the cmd to setup the server environment: `./CreateVenv-SERVER.sh`
+4. You have two options in setting up the server env: either run the cmd to setup the server environment with a script: `chmod a+x CreateEnv-SERVER.sh; ./CreateEnv-SERVER.sh`, OR execute the following line by line:
+```
+
+```
 
 #### OpenClaw Agent
 
-5. Set up the OpenClaw agent:
+5. Set up theworkspace (TODO need to go intot he json and specifically specifyt he worksapce here) The workspace files for the agent's personality are contained within agent-kibub/openclaw-embodied:
+```
+AGENTS.md
+HEARTBEAT.md  
+IDENTITY.md  
+MEMORY.md 
+SOUL.md  
+TOOLS.md  
+USER.md
+```
+You can reuse these files or create your own agent identity.
+6. Set up the model (TODO go into the jsons and edit and also find the mdoels off of Openrouter)
+
+        openrouter/auto                                                                                                      
+        openrouter/free                                                                                                      
+        openrouter/owl-alpha                                                                                                 
+        openrouter/google/gemini-2.5-flash-lite                                                                              
+        openrouter/deepseek/deepseek-v4-flash 
+
+7. In the OpenClaw terminal: `talk to agent`
+8. You can now prompt the agent:
+
+Example
+
+        Imagine you executed evaluate_status and saw that there was a cup to the left of your workspace. What skill would you deploy, and what would your reasoning   
+        be? What would you do after executing that skill?                                                                                                             
+                                                                                                                                                                    
+
+        Skill: pick-up-cup-left-arm                                                                                                                                   
+                                                                                                                                                                    
+        Reasoning: The cup is on the left → the left arm is closest and has the best reach path. Using the right arm would mean crossing the robot's centerline,      
+        risking cable snags and a worse wrist angle. The GROOT model for pick-up-cup-left-arm was trained for this exact task ("Pick up the cup using the cup         
+        handle"). So export SKILL=pick-up-cup-left-arm, bash the deploy script, and let it cook.                                                                      
+                                                                                                                                                                    
+        After executing: Run evaluate-status again. Pull the overhead_realsense image and check:                                                                      
+                                                                                                                                                                    
+        - SUCCESS → cup's off the table? Report done. Ask if they want it placed somewhere or if there's a stack task next.                                           
+        - FAILED → cup still on the table? Look at the image for why — gripper missed? Cup tipped? Handle orientation wrong? Adjust and retry, or admit the model's   
+        having a bad day.                                                                                                                                           
+        - IN_PROGRESS → wait, re-evaluate in a few seconds.                                                                                                           
+        - UNCLEAR → check the wrist cameras. Maybe the overhead view is blocked by the arm.                                                                           
+                                                                                                                                                                    
+        That's the loop: deploy → observe → decide. Don't blindly retry, don't assume success.                                                                        
+                                                                                                                                                                    
+        Want me to actually do this if the robot comes back, or was this purely hypothetical cheese? 🧀      
+
+Example 
+TODO
+
 
 
 ### Client Software Setup:
