@@ -1,10 +1,13 @@
 # agent-kibub
 'Agent Kibub' refers to the OpenClaw agentic system embodied on a dual arm, differential drive mobile robot system 'Kibub'.  This master repository contains the submodules needed to teleop, train, inference on Kibub, and the agent setup for OpenClaw.
 
-Example:
-```
-
-```
+Submodules within this repository:
+- openclaw-embodied
+- kibub_diff_drive
+- kibub_operator
+- kibub-neck-servos
+- lerobot
+- cluster
 
 ## Setup
 
@@ -66,7 +69,7 @@ Fast-forward
 
 #### OpenClaw Agent
 
-5. Set up theworkspace (TODO need to go intot he json and specifically specifyt he worksapce here) The workspace files for the agent's personality are contained within agent-kibub/openclaw-embodied:
+5. Set up the workspace.  (TODO need to go intot he json and specifically specifyt he worksapce here) The workspace files for the agent's personality are contained within agent-kibub/openclaw-embodied:
 ```
 AGENTS.md
 HEARTBEAT.md  
@@ -86,7 +89,7 @@ You can reuse these files or create your own agent identity.
         openrouter/deepseek/deepseek-v4-flash 
 
 7. In the OpenClaw terminal: `talk to agent`
-8. You can now prompt the agent:
+8. You can now prompt the agent to evaluate its workspace and decide what to do:
 
 Example
 
@@ -115,7 +118,7 @@ Example
 Example 
 TODO
 
-
+---------- **You are now finished the Server Software Setup** ----------
 
 ### Client Software Setup:
 
@@ -268,6 +271,7 @@ sudo udevadm trigger
 
 6. Then, run `ls /dev/` to see if your new symlink appears. Remove the USB device and run the command again to ensure the device disappears. Plug in the USB device and run the command again to ensure the device reappears. 
 
+---------- **You are now finished the Client Software Setup** ----------
 
 ## Teleop, recording datasets, rollout trained policies:
 
@@ -277,7 +281,7 @@ sudo udevadm trigger
 
 Reference agent-kibub/kibub_operator/README.md for scripts and instructions on the aforementioned operations!!
 
-NOTE that training occurs on the SERVER or CLUSTER only.
+NOTE that training occurs on the SERVER or CLUSTER only. 
 
 ## Training policies:
 
@@ -285,10 +289,53 @@ NOTE that training occurs on the SERVER or CLUSTER only.
 
 ## Openclaw agent:
 
-***SERVER*** is needed for running the OpenClaw agent in isolation, where it will attempt to execute skills that require the Client to connect. So, if you intend to simply debug the Openclaw agent alone, you only need Server, but to actually run actions on the robot and interface with cameras/sensors/motors, you must also turn on the ***CLIENT***. On the server, run `openclaw`. When the terminal opens, run `talk to agent` and choose your Kibub agent. To set up and modify the OpenClaw agent, read the OpenClaw documentation https://docs.openclaw.ai/ and reference agent-kibub/openclaw-embodied/OPERATOR_README.md for more operator details. Note that the Openclaw agent's workspace should be set to openclaw-embodied, and that you can try different Openrouter models: https://openrouter.ai/models
+***SERVER*** is needed for running the OpenClaw agent in isolation, where it will attempt to execute skills that require the Client to connect. So, if you intend to simply debug the Openclaw agent alone, you only need Server. To actually run actions on the robot and interface with cameras, sensors, and motors, proceed with the following steps: 
+
+1. Power on the ***CLIENT*** computer (by pressing on the Intel NUC power button until the LED lights up blue)
+
+2. Paste the Client's IP address in the document agent-kibub/openclaw-embodied/KIBUB_IP. To find the Client IP address, SSH into Kibub and run `ip a`. Then, find the address under `wlp46s0`. See the example below, where the fourth entry `wlp46s0` indicates that Kibub' IP address is `10.145.8.176`. *(Note that the IP address likely only needs to be set up once but can change)*:
+
+    ```
+    (base) kibub@kibub:~$ ip a
+    1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+        link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+        inet 127.0.0.1/8 scope host lo
+        valid_lft forever preferred_lft forever
+        inet6 ::1/128 scope host noprefixroute 
+        valid_lft forever preferred_lft forever
+    2: enp45s0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN group default qlen 1000
+        link/ether a8:a1:59:d1:3f:26 brd ff:ff:ff:ff:ff:ff
+    3: enp47s0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN group default qlen 1000
+        link/ether a8:a1:59:d1:3f:27 brd ff:ff:ff:ff:ff:ff
+    4: wlp46s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+        link/ether bc:09:1b:f3:00:f7 brd ff:ff:ff:ff:ff:ff
+        inet ***10.145.8.176***/24 brd 10.145.8.255 scope global dynamic noprefixroute wlp46s0
+        valid_lft 84732sec preferred_lft 84732sec
+        inet6 fe80::468d:503b:8449:53aa/64 scope link noprefixroute 
+        valid_lft forever preferred_lft forever
+    5: tailscale0: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1280 qdisc fq_codel state UNKNOWN group default qlen 500
+        link/none 
+        inet 100.100.215.15/32 scope global tailscale0
+        valid_lft forever preferred_lft forever
+        inet6 fd7a:115c:a1e0::fd38:d70f/128 scope global 
+        valid_lft forever preferred_lft forever
+        inet6 fe80::85b0:94ee:21f:30c2/64 scope link stable-privacy 
+        valid_lft forever preferred_lft forever
+    6: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+        link/ether b2:52:14:89:a1:15 brd ff:ff:ff:ff:ff:ff
+        inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+        valid_lft forever preferred_lft forever
+    ```
+3. On the Server, run `openclaw` in the terminal. 
+4. When the OpenClaw terminal opens, run `talk to agent`. To set up and modify the OpenClaw agent, read the OpenClaw documentation https://docs.openclaw.ai/ and reference agent-kibub/openclaw-embodied/OPERATOR_README.md for more operator details. Note that the Openclaw agent's workspace should be set to openclaw-embodied, and that you can try different Openrouter models: https://openrouter.ai/models. 
 
 # Agent Kibub 
 
 Suppose you have your VLA models, you've set up the OpenClaw agent workspace, and you are ready to demo/evaluate the closed loop system (aka use the OpenClaw agent to reason about Kibub's environment and deploy both Gr00t skills and camera/motor skills on Kibub).
 
-Below is your cheatsheet. For more details, read agent-kibub/openclaw-embodied/OPERATOR_README.md.
+The following steps should be all you need to run the agent if the Client and Server have been configured. For more details, read agent-kibub/openclaw-embodied/OPERATOR_README.md.
+
+1. Turn on both the Client and Server computer..
+2. on the Server: `openclaw` then `talk to agent`.
+
+--- END OF README.md ---
