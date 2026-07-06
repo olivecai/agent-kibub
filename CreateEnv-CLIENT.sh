@@ -1,7 +1,9 @@
 #!/bin/bash
 
+# Ensure you are executing this script into kibub!
 # This script attempts the following:
-    # Ensure you are executing this script into kibub!
-    # Git clone the repos you need if you dont already have them
-    # Install olivecai forked lerobot env (without the groot training installation)
-    #
+    # Git clone repositories kibub_operator, kibub_diff_drive, kibub-neck-servos
+    # Install olivecai forked lerobot env (without the groot training installation) (include within requirements.txt)
+    
+
+    

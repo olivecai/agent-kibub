@@ -64,6 +64,7 @@ Fast-forward
 3. Install miniconda so that you can use virtual environments to manage packages: https://www.anaconda.com/docs/getting-started/miniconda/install/linux-install (`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh` and after it has installed, `source ~/.bashrc`)
 4. You have two options in setting up the server env: either run the cmd to setup the server environment with a script: `chmod a+x CreateEnv-SERVER.sh; ./CreateEnv-SERVER.sh`, OR execute the following line by line:
 ```
+TODO
 
 ```
 
@@ -124,10 +125,11 @@ TODO
 
 *Presumably Kibub has already been set up but these steps will be documented for redundancy*
 
+Follow instructions below OR ensure the kibub client is powered on and in the Server shell, run `chmod a+x CreateEnv-CLIENT.sh; ./CreateEnv-CLIENT.sh`
 1. Launch a Kibub SSH session: `ssh kibub@kibub`. 
 2. Clone the following three repositories in /home/kibub/: kibub-neck-servos (https://github.com/olivecai/kibub-neck-servos), kibub_diff_drive (https://github.com/olivecai/kibub_diff_drive), and kibub_operator (https://github.com/olivecai/kibub_operator). If they are already cloned, cd into each of them and `git pull origin main`
 3. Run `conda create env -n lerobot -y; conda activate lerobot`
-4. Run `cd kibub_operator; pip install -r client-requirements.txt`
+4. Run `cd kibub_operator; pip install -r /home/kibub/client_requirements.txt`
 
 #### Symlinks and Devices
 
