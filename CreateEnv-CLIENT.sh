@@ -7,10 +7,6 @@ set -e # script will exit on any error
 # since the remote commands run non-interactively.
 
 KIBUB_HOST="kibub@kibub"
-KIBUB_HOME="/home/kibub"
-
-echo "LOGGING: copying client_requirements.txt to the Kibub client:"
-scp client_requirements.txt "${KIBUB_HOST}:${KIBUB_HOME}/client_requirements.txt"
 
 echo "LOGGING: running remote environment setup on the Kibub client:"
 ssh "${KIBUB_HOST}" bash -s <<'EOF'
@@ -42,7 +38,7 @@ conda activate lerobot
 
 echo "LOGGING: populate the venv:"
 cd kibub_operator
-pip install -r /home/kibub/client_requirements.txt
+pip install -r /home/kibub/kibub_operator/client_requirements.txt
 EOF
 
 echo "LOGGING: Kibub client environment setup complete."

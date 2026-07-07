@@ -1,7 +1,11 @@
 # agent-kibub
-'Agent Kibub' refers to the OpenClaw agentic system embodied on a dual arm, differential drive mobile robot system 'Kibub'.  This master repository contains the submodules needed to teleop, train, inference on Kibub, and the agent setup for OpenClaw.
 
-Submodules within this repository:
+Written by Olivia Cai on July 7 2026
+
+
+'**Agent Kibub**' refers to the OpenClaw agentic system embodied on a dual arm, differential drive mobile robot system 'Kibub'.  This master repository contains the submodules needed to teleop, train, inference on Kibub, and the agent setup for OpenClaw.
+
+**Submodules** within this repository:
 - openclaw-embodied
 - kibub_diff_drive
 - kibub_operator
@@ -9,11 +13,11 @@ Submodules within this repository:
 - lerobot
 - cluster
 
-Editing the submodules:
+**Editing the submodules:**
 1. cd into the submodule and `git checkout main`. Do not edit in the detached HEAD state.
 2. After making your edits, push your changes to the submodule repository. Note that this step does not update agent-kibub's record of which submodule commit to track: 
 ```
-`git add .
+git add .
 git commit -m "fix: something"
 git push origin main
 ```
@@ -25,6 +29,12 @@ git add path/to/submodule
 git commit -m "Update submodule to latest fix"
 git push origin main
 ```
+
+Running Agent Kibub requires a server-client setup; a server has lots of computing power and is usually a big PC with a GPU. A client is typically a small and portable computer for lightweight operations.
+
+Our server will train our AI models and compute inference, sending instructions over a network connection to our robot client, which controls the motors/servos/cameras.
+
+See the below instructions on setting up the Server and the Client.
 
 ## Setup
 
@@ -196,9 +206,9 @@ Example
 
 1. Set up a passwordless SSH connection between the Client and Server, so that the AI agent can execute commands on Kibub directly. Generate a key on the Server if you don't have one: `ssh-keygen -t ed25519`. 
 
-2. Copy the key from the Server to the Client. This will prompt for the password to kibub@kibub, and then never again: `ssh-copy-id kibub@kibub`
+2. Copy the key from the Server to the Client. This will prompt for the password to kibub@kibub, and then never again: `ssh-copy-id kibub@kibub`. The passwordless SSH should now work.
 
-3. Paste the Client's IP address in the document agent-kibub/openclaw-embodied/KIBUB_IP. To find the Client IP address, SSH into Kibub and run `ip a`. Then, find the address under `wlp46s0`. See the example below, where the fourth entry `wlp46s0` indicates that Kibub' IP address is `10.145.8.176`. *(Note that the IP address likely only needs to be set up once but can change)*:
+3. Find the Client IP address, SSH into Kibub and run `ip a`. Then, find the address under `wlp46s0`. See the example below, where the fourth entry `wlp46s0` indicates that Kibub' IP address is `10.145.8.176`. *(Note that the IP address likely only needs to be set up once but can change)*:
 
     ```
     (base) kibub@kibub:~$ ip a
@@ -231,12 +241,13 @@ Example
         inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
         valid_lft forever preferred_lft forever
 
+4. Copy the Client IP address (e.g. 10.145.8.176) and paste it into the file agent-kibub/openclaw-embodied/KIBUB_IP. (The file KIBUB_IP is used by the OpenClaw agent later for networking)
 
 Follow instructions below **OR** power on the Client and run the following from the Server shell with current working directory as agent-kibub: `chmod a+x CreateEnv-CLIENT.sh; ./CreateEnv-CLIENT.sh`.
 1. Launch a Kibub SSH session: `ssh kibub@kibub`. 
-2. Clone the following three repositories in /home/kibub/: kibub-neck-servos (https://github.com/olivecai/kibub-neck-servos), kibub_diff_drive (https://github.com/olivecai/kibub_diff_drive), and kibub_operator (https://github.com/olivecai/kibub_operator). If they are already cloned, cd into each of them and `git pull origin main`
+2. Clone the following three repositories in /home/kibub/: **kibub-neck-servos** (https://github.com/olivecai/kibub-neck-servos), **kibub_diff_drive** (https://github.com/olivecai/kibub_diff_drive), and **kibub_operator** (https://github.com/olivecai/kibub_operator). If they are already cloned, cd into each of them and `git pull origin main`
 3. Run `conda create -n lerobot -y; conda activate lerobot`
-4. Run `cd kibub_operator; pip install -r /home/kibub/client_requirements.txt`
+4. Run `cd kibub_operator; pip install -r /home/kibub/kibub_operator/client_requirements.txt`
 
 #### Symlinks and Devices
 
@@ -265,6 +276,7 @@ diff_drive | differential wheels | agent rollout |
 If you are missing a symlink, add it using udev rules *and* add it to the DEVICES.py file:
 
 1. Find your device in the device tree, listed as something like /dev/ttyACM0 or /dev/ttyUSB1, etc. You can see which cameras lerobot identifies by running: `conda activate lerobot; cd /home/kibub; lerobot-find-cameras`
+
 Example output from `lerobot-find-cameras`:
 ```
 --- Detected Cameras ---
