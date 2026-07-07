@@ -29,7 +29,7 @@ export SLURM_TIME="05:00:00"
 ##########################################
 # Do not edit any of the variables below #
 ##########################################
+export POLICY="groot"
 export OUTPUT_DIR="${BIGWORK}/lerobot-run/outputs/train/${POLICY}-${MODEL_REPO}"
 export HF_HOME=$BIGWORK/lerobot-run/.cache/huggingface
 export HF_LEROBOT_HOME=$HF_HOME/lerobot
-export POLICY="groot"

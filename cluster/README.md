@@ -79,7 +79,7 @@ The following instructions are specifically created for training Groot VLA model
 
 1. Let USER be your cluster username; SSH into the cluster Login Node: `ssh ${USER}@transfer.cluster.uni-hannover.de`.
 
-    Example:
+  Example:
  ```   
 (base) ocai@cowmatch005:~$ ssh nhkwcaio@login.cluster.uni-hannover.de
 The authenticity of host 'login.cluster.uni-hannover.de (130.75.7.130)' can't be established.
@@ -102,7 +102,7 @@ You can double check the existence of your newly created directories by running 
 
   You can safely store your SSH key in ${HOME} on the cluster, since only the owner has rwx permissions(double check this by running `ls -ld $HOME`). Generate the SSH key: `ssh-keygen -t ed25519 -C "your_github_email@domain.ca"; cat ~/.ssh/id_ed25519.pub`. Copy your public key. On the Github site https://github.com/settings/keys: Settings > Access > SSH and GPG keys > New SSH Key > let Title == something like "LUH cluster", Key type == Authentication, and paste in the copied output from `cat ~/.ssh/id_ed25519.pub`. 
 
-    Example:
+  Example:
 ```
   nhkwcaio@login01:/software/NHKW25031/nhkwcaio/agent-kibub$ ls -ld $HOME
 drwx------ 11 nhkwcaio NHKW25031 4096 Jul  2 10:21 /home/nhkwcaio
@@ -143,7 +143,7 @@ git submodule init
 git submodule update
 ```
 
-  Example:
+Example:
   ```
 nhkwcaio@login01:/software/NHKW25031/nhkwcaio$ cd agent-kibub
 git submodule init
