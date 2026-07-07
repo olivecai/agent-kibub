@@ -430,7 +430,7 @@ Download complete: 100%|█| 394M/394M [00:06<00:00, 6
 
 6. Run `mkdir -p $BIGWORK/lerobot-run; cd $BIGWORK/lerobot-run` 
 
-7. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, internally runs the command `sbatch <passes any SLURM directives> ./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This step assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. 
+7. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, internally runs the command `sbatch <passes any SLURM directives> ./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This step assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. (NOTE: ensure you ran `chmod a+x $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-*` to avoid a permissions denied error on running the script)
  
 Example:
 ```
