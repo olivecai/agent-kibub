@@ -347,9 +347,9 @@ Check the output directory for your work:
 
 ## Creating & running a job (Training GR00t models for Kibub via Lerobot scripts)
 
-1. Suppose your Huggingface dataset is saved either locally to your computer (`.cache/huggingface/lerobot/oliveoil8888/pick-up-cup`) or online at the Huggingface hub at tag `oliveoil8888/pick-up-cup`. 
+1. SSH into the Login Node: `ssh nhkwcaio@login.cluster.uni-hannover.de`
 
-2. You can update the Github: `cd $SOFTWARE/$USER/agent-kibub` and then `git pull; git submodule update`
+2. You can update the Github: `cd $SOFTWARE/$USER/agent-kibub` and then `git stash; git pull; git submodule update`
 
 3. Run `chmod a+x $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-*`
 
@@ -368,7 +368,7 @@ Check the output directory for your work:
   # Run `. TrainKibub-VARS.sh`. Do not run `./TrainKibub-VARS.sh`, as this script is a child process that cannot set variables in its parent.
 
   # dataset variables
-  export DATASET_REPO="oliveoil8888/pick-up-cup" # hf tag of the Huggingface dataset you would like to download for training
+  export DATASET_REPO="oliveoil8888/pick-up-cup" # hf tag of the Huggingface dataset you would like to download from Huggingface for training
   export TASK="Pick up the cube and place it in the cup." # language prompt demonstrated by the dataset
 
   # huggingface auth 
@@ -394,7 +394,7 @@ Check the output directory for your work:
   export POLICY="groot"     
   ```  
 
-*WARNING*: The following steps export shell variables, which reset when you restart your terminal, and can be overwritten. If you run `REPO=pick-up-cup` but then run `REPO=wave-hello`, REPO will lose the original value `pick-up-cup`. If you want to run multiple jobs in succession (download job1, job2, then run job1, job2, then upload job1, job2) it would be simpler to copy and paste the job1 version or job2 version of TrainKibub-VARS.sh into the cluster file TrainKibub-VARS.sh before running the download, run, upload scripts. 
+*WARNING*: The following steps export shell variables, which reset when you restart your terminal, and can be overwritten. If you run `REPO=pick-up-cup` but then run `REPO=wave-hello`, REPO will lose the original value `pick-up-cup`. If you want to run multiple jobs in succession (download job1, job2, then run job1, job2, then upload job1, job2) it would be simpler to copy and paste the job1 version or job2 version of TrainKibub-VARS.sh into the cluster file TrainKibub-VARS.sh before running the download, run, upload scripts. You can store these variants in cluster/local_stash (consider it a tmp storage)
 
 5. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-DOWNLOAD.sh`. This script runs your TrainKibub-VARS.sh to export your modified variables, and then downloads your desired dataset.
 
