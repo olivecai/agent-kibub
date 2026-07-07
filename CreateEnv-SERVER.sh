@@ -16,8 +16,8 @@ git pull origin main
 echo "LOGGING: creating conda env:"
 
 conda deactivate 2>/dev/null || true
-conda create -n TEST python=3.12 -y
-conda activate TEST 
+conda create -n lerobot python=3.12 -y
+conda activate lerobot
 
 echo "LOGGING: populate the venv:"
 pip install -r server_requirements.txt #server-requirements.txt does not contain flash_attn since it is very problematic and seems to fare better installed separately.

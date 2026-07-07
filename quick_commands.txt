@@ -1,4 +1,4 @@
-# This .txt contains quick convenient commands; run Ctrl+L Ctrl+C to copy the line.
+# This .txt contains quick convenient commands; run Ctrl+L Ctrl+C to copy the line your cursor is on.
 
 ssh nhkwcaio@transfer.cluster.uni-hannover.de
 

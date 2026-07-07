@@ -62,15 +62,30 @@ Fast-forward
 ```
 
 3. Install miniconda so that you can use virtual environments to manage packages: https://www.anaconda.com/docs/getting-started/miniconda/install/linux-install (`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh` and after it has installed, `source ~/.bashrc`)
-4. You have two options in setting up the server env: either run the cmd to setup the server environment with a script: `chmod a+x CreateEnv-SERVER.sh; ./CreateEnv-SERVER.sh`, OR execute the following line by line:
+4. You have two options in setting up the server env: either run the cmd to setup the server environment with a script: `chmod a+x CreateEnv-SERVER.sh; ./CreateEnv-SERVER.sh`, OR execute the following line by line with current working directory within agent-kibub:
 ```
-TODO
+# either run the following one by one, or run `chmod a+x CreateEnv-SERVER.sh; ./CreateEnv-SERVER.sh`
+git submodule init
+git submodule update
+
+git pull origin main # or pull whichever branch/checkpoint you need
+
+conda create -n lerobot python=3.12 -y
+conda activate lerobot 
+
+pip install -r server_requirements.txt # flash-attn is installed seperately in next step
+
+pip install flash_attn==2.8.3 --no-cache-dir --no-build-isolation
+
+# install openclaw, add your Openrouter API key.
+curl -fsSL https://openclaw.ai/install.sh | bash
 
 ```
 
 #### OpenClaw Agent
 
-5. Set up the workspace.  (TODO need to go intot he json and specifically specifyt he worksapce here) The workspace files for the agent's personality are contained within agent-kibub/openclaw-embodied:
+5. In the previous step, you installed OpenClaw. Your agent relies on Markdown files describing its personality and responsibilities; you can modify these Markdown files, or you can reuse the current Markdown files existing in agent-kibub/openclaw-embodied. *NOTE* that the current workspace for the AI agent is .openclaw/workspace, and in the next step you will change the workspace location to where the Markdown files are also stored:
+
 ```
 AGENTS.md
 HEARTBEAT.md  
@@ -81,23 +96,61 @@ TOOLS.md
 USER.md
 ```
 You can reuse these files or create your own agent identity.
-6. Set up the model (TODO go into the jsons and edit and also find the mdoels off of Openrouter)
 
-        openrouter/auto                                                                                                      
-        openrouter/free                                                                                                      
-        openrouter/owl-alpha                                                                                                 
-        openrouter/google/gemini-2.5-flash-lite                                                                              
-        openrouter/deepseek/deepseek-v4-flash 
+6. Configure your agent's json file: 
+
+Suppose you want to use the following models (you can find more models on Openrouter: https://openrouter.ai/models):
+
+  ```
+  openrouter/auto                                                                                                      
+  openrouter/free                                                                                                      
+  openrouter/owl-alpha                                                                                                 
+  openrouter/google/gemini-2.5-flash-lite                                                                              
+  openrouter/deepseek/deepseek-v4-flash 
+  ```
+
+You can add the entry to the file .openclaw/openclaw.json by running `nano /home/$(whoami)/.openclaw/openclaw.json` and editing agents::defaults::models. 
+
+You also must edit the agent's workspace. The default workspace set by the Openclaw installation is `.openclaw/workspace` but you must change this to the openclaw-embodied directory (if you cloned agent-kibub into /home/USER/, change the workspace path to `/home/USER/agent-kibub/openclaw-embodied`)
+
+See the example of the "agents" entry in my json below:
+```
+    "agents": {
+        "defaults": {
+          "workspace": "/home/ocai/openclaw-embodied",
+          "models": {
+            "openrouter/auto": {
+              "alias": "OpenRouter"
+            },
+            "openrouter/free": {},
+            "openrouter/owl-alpha": {},
+            "openrouter/google/gemini-2.5-flash-lite": {},
+            "openrouter/deepseek/deepseek-v4-flash": {}
+          },
+          "model": {
+            "primary": "openrouter/google/gemini-2.5-flash-lite",
+            "fallbacks": [
+              "openrouter/auto",
+              "openrouter/free",
+              "openrouter/owl-alpha"
+            ]
+          }
+        }
+      },
+```
+
+To exit nano and save the changes: `Ctrl+X`, then `y`
 
 7. In the OpenClaw terminal: `talk to agent`
 8. You can now prompt the agent to evaluate its workspace and decide what to do:
 
 Example
 
-        Imagine you executed evaluate_status and saw that there was a cup to the left of your workspace. What skill would you deploy, and what would your reasoning   
-        be? What would you do after executing that skill?                                                                                                             
-                                                                                                                                                                    
+**USER PROMPT:** "Imagine you executed evaluate_status and saw that there was a cup to the left of your workspace. What skill would you deploy, and what would your reasoning   
+        be? What would you do after executing that skill?"
 
+**AGENT RESPONSE:**
+                                                                                                                                                                    
         Skill: pick-up-cup-left-arm                                                                                                                                   
                                                                                                                                                                     
         Reasoning: The cup is on the left → the left arm is closest and has the best reach path. Using the right arm would mean crossing the robot's centerline,      
@@ -116,19 +169,56 @@ Example
                                                                                                                                                                     
         Want me to actually do this if the robot comes back, or was this purely hypothetical cheese? 🧀      
 
-Example 
-TODO
-
----------- **You are now finished the Server Software Setup** ----------
+-------------------- **You are now finished the Server Software Setup** -------------------- 
 
 ### Client Software Setup:
 
 *Presumably Kibub has already been set up but these steps will be documented for redundancy*
 
-Follow instructions below OR ensure the kibub client is powered on and in the Server shell, run `chmod a+x CreateEnv-CLIENT.sh; ./CreateEnv-CLIENT.sh`
+#### Passwordless SSH and connection between Client and Server
+
+1. Set up a passwordless SSH connection between the Client and Server, so that the AI agent can execute commands on Kibub directly. Generate a key on the Server if you don't have one: `ssh-keygen -t ed25519`. 
+
+2. Copy the key from the Server to the Client. This will prompt for the password to kibub@kibub, and then never again: `ssh-copy-id kibub@kibub`
+
+3. Paste the Client's IP address in the document agent-kibub/openclaw-embodied/KIBUB_IP. To find the Client IP address, SSH into Kibub and run `ip a`. Then, find the address under `wlp46s0`. See the example below, where the fourth entry `wlp46s0` indicates that Kibub' IP address is `10.145.8.176`. *(Note that the IP address likely only needs to be set up once but can change)*:
+
+    ```
+    (base) kibub@kibub:~$ ip a
+    1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+        link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+        inet 127.0.0.1/8 scope host lo
+        valid_lft forever preferred_lft forever
+        inet6 ::1/128 scope host noprefixroute 
+        valid_lft forever preferred_lft forever
+    2: enp45s0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN group default qlen 1000
+        link/ether a8:a1:59:d1:3f:26 brd ff:ff:ff:ff:ff:ff
+    3: enp47s0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN group default qlen 1000
+        link/ether a8:a1:59:d1:3f:27 brd ff:ff:ff:ff:ff:ff
+    4: wlp46s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+        link/ether bc:09:1b:f3:00:f7 brd ff:ff:ff:ff:ff:ff
+        inet ***10.145.8.176***/24 brd 10.145.8.255 scope global dynamic noprefixroute wlp46s0
+        valid_lft 84732sec preferred_lft 84732sec
+        inet6 fe80::468d:503b:8449:53aa/64 scope link noprefixroute 
+        valid_lft forever preferred_lft forever
+    5: tailscale0: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1280 qdisc fq_codel state UNKNOWN group default qlen 500
+        link/none 
+        inet 100.100.215.15/32 scope global tailscale0
+        valid_lft forever preferred_lft forever
+        inet6 fd7a:115c:a1e0::fd38:d70f/128 scope global 
+        valid_lft forever preferred_lft forever
+        inet6 fe80::85b0:94ee:21f:30c2/64 scope link stable-privacy 
+        valid_lft forever preferred_lft forever
+    6: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+        link/ether b2:52:14:89:a1:15 brd ff:ff:ff:ff:ff:ff
+        inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+        valid_lft forever preferred_lft forever
+
+
+Follow instructions below **OR** power on the Client and run the following from the Server shell with current working directory as agent-kibub: `chmod a+x CreateEnv-CLIENT.sh; ./CreateEnv-CLIENT.sh`.
 1. Launch a Kibub SSH session: `ssh kibub@kibub`. 
 2. Clone the following three repositories in /home/kibub/: kibub-neck-servos (https://github.com/olivecai/kibub-neck-servos), kibub_diff_drive (https://github.com/olivecai/kibub_diff_drive), and kibub_operator (https://github.com/olivecai/kibub_operator). If they are already cloned, cd into each of them and `git pull origin main`
-3. Run `conda create env -n lerobot -y; conda activate lerobot`
+3. Run `conda create -n lerobot -y; conda activate lerobot`
 4. Run `cd kibub_operator; pip install -r /home/kibub/client_requirements.txt`
 
 #### Symlinks and Devices
@@ -155,7 +245,7 @@ overhead_realsense | overhead birdeye realsense camera color channel | optional:
 diff_drive | differential wheels | agent rollout |
 
 
-If you are missing a symlnik, add it using udev rules:
+If you are missing a symlink, add it using udev rules *and* add it to the DEVICES.py file:
 
 1. Find your device in the device tree, listed as something like /dev/ttyACM0 or /dev/ttyUSB1, etc. You can see which cameras lerobot identifies by running: `conda activate lerobot; cd /home/kibub; lerobot-find-cameras`
 Example output from `lerobot-find-cameras`:
@@ -273,7 +363,9 @@ sudo udevadm trigger
 
 6. Then, run `ls /dev/` to see if your new symlink appears. Remove the USB device and run the command again to ensure the device disappears. Plug in the USB device and run the command again to ensure the device reappears. 
 
----------- **You are now finished the Client Software Setup** ----------
+7. Add your device to agent-kibub/kibub_operator/DEVICES.py 
+
+-------------------- **You are now finished the Client Software Setup** --------------------
 
 ## Teleop, recording datasets, rollout trained policies:
 
@@ -285,6 +377,8 @@ Reference agent-kibub/kibub_operator/README.md for scripts and instructions on t
 
 NOTE that training occurs on the SERVER or CLUSTER only. 
 
+NOTE that any cameras should be specified in agent-kibub/kibub_operator/DEVICES.py and if you choose to add a camera, you must also update the udev rules on the client and the DEVICES.py file.
+
 ## Training policies:
 
 ***SERVER*** and ***CLUSTER*** are both capable of training policies. For training on the Server, use the training script described in agent-kibub/kibub_operator/README.md. For training on the Cluster, follow the instructions in agent-kibub/cluster/README.md.
@@ -295,7 +389,7 @@ NOTE that training occurs on the SERVER or CLUSTER only.
 
 1. Power on the ***CLIENT*** computer (by pressing on the Intel NUC power button until the LED lights up blue)
 
-2. Paste the Client's IP address in the document agent-kibub/openclaw-embodied/KIBUB_IP. To find the Client IP address, SSH into Kibub and run `ip a`. Then, find the address under `wlp46s0`. See the example below, where the fourth entry `wlp46s0` indicates that Kibub' IP address is `10.145.8.176`. *(Note that the IP address likely only needs to be set up once but can change)*:
+2. (This step should have been completed in the Client setup, but is written here again for clarity) Paste the Client's IP address in the document agent-kibub/openclaw-embodied/KIBUB_IP. To find the Client IP address, SSH into Kibub and run `ip a`. Then, find the address under `wlp46s0`. See the example below, where the fourth entry `wlp46s0` indicates that Kibub' IP address is `10.145.8.176`. *(Note that the IP address likely only needs to be set up once but can change)*:
 
     ```
     (base) kibub@kibub:~$ ip a
@@ -331,7 +425,7 @@ NOTE that training occurs on the SERVER or CLUSTER only.
 3. On the Server, run `openclaw` in the terminal. 
 4. When the OpenClaw terminal opens, run `talk to agent`. To set up and modify the OpenClaw agent, read the OpenClaw documentation https://docs.openclaw.ai/ and reference agent-kibub/openclaw-embodied/OPERATOR_README.md for more operator details. Note that the Openclaw agent's workspace should be set to openclaw-embodied, and that you can try different Openrouter models: https://openrouter.ai/models. 
 
-# Agent Kibub 
+## Agent Kibub 
 
 Suppose you have your VLA models, you've set up the OpenClaw agent workspace, and you are ready to demo/evaluate the closed loop system (aka use the OpenClaw agent to reason about Kibub's environment and deploy both Gr00t skills and camera/motor skills on Kibub).
 
@@ -339,5 +433,18 @@ The following steps should be all you need to run the agent if the Client and Se
 
 1. Turn on both the Client and Server computer..
 2. on the Server: `openclaw` then `talk to agent`.
+
+## Troubleshooting
+
+### Multiple cameras fighting over one port / despite multiple cameras connected, intermittent failure to capture at same time
+- Change mode from JPEG to MJPG
+- Use symlinks to avoid enumeration issues
+
+### Training or recording fails midway
+- Clean up the cache of old recordings and datasets
+
+### Flash-attn not installing
+- Install all packages first and flash-attn last (flash-attn needs to install against pre-existing packages)
+
 
 --- END OF README.md ---
