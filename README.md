@@ -9,6 +9,23 @@ Submodules within this repository:
 - lerobot
 - cluster
 
+Editing the submodules:
+1. cd into the submodule and `git checkout main`. Do not edit in the detached HEAD state.
+2. After making your edits, push your changes to the submodule repository. Note that this step does not update agent-kibub's record of which submodule commit to track: 
+```
+`git add .
+git commit -m "fix: something"
+git push origin main
+```
+3. Now update the parent repo (agent-kibub) to bookmark the latest commit of the submodule:
+```
+cd ../..    # back to parent repo root
+git status  # you'll see the submodule listed as "modified" (new commits)
+git add path/to/submodule
+git commit -m "Update submodule to latest fix"
+git push origin main
+```
+
 ## Setup
 
 ### Hardware prerequisites:
