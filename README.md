@@ -55,6 +55,9 @@ See the below instructions on setting up the Server and the Client.
 A few preliminary notes on the software setup:
 - **Server** will refer to the Policy Server computer (CUDA device), while **Client** will refer to the Robot Client computer (Intel NUC)
 
+### Hardware Setup:
+1. SO101 arms: plug in V and USB to intel NUC TODO
+
 ### Server Software Setup:
 1. Run `cd /home/$(whoami)/` (or wherever you'd like to put this repo)
 2. Clone the repository agent-kibub (https://github.com/olivecai/agent-kibub) on the **Server**.
@@ -395,6 +398,10 @@ sudo udevadm trigger
 7. Add your device to agent-kibub/kibub_operator/DEVICES.py 
 
 -------------------- **You are now finished the Client Software Setup** --------------------
+
+## Cluster Software Setup:
+
+Read the Markdown file agent-kibub/cluster/README.md sections `Initial Setup (Training GR00t models for Kibub via Lerobot scripts)` and `Creating & running a job (Training GR00t models for Kibub via Lerobot scripts)`.
 
 ## Teleop, recording datasets, rollout trained policies:
 
