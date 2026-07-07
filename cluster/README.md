@@ -91,7 +91,7 @@ Warning: Permanently added 'login.cluster.uni-hannover.de' (ED25519) to the list
 # Enter your password and you should enter the cluster!
 ```
 
-2. Create your workspaces in $PROJECT and $SOFTWARE:
+2. Now in your SSH session, create your workspaces in $PROJECT and $SOFTWARE:
 ```
 mkdir -m 0700 ${PROJECT}/${USER}
 mkdir -m 0700 ${SOFTWARE}/${USER}
@@ -430,7 +430,7 @@ Download complete: 100%|█| 394M/394M [00:06<00:00, 6
 
 6. Run `mkdir -p $BIGWORK/lerobot-run; cd $BIGWORK/lerobot-run` 
 
-7. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, runs `sbatch <passes any SLURM directives> ./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This step assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. 
+7. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, internally runs the command `sbatch <passes any SLURM directives> ./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This step assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. 
  
 Example:
 ```

@@ -29,4 +29,4 @@ hf auth login
 
 # download your demonstrations dataset
 # hf download <hf repo tag> --local-dir <local location>
-hf download $DATASET_REPO --repo-type dataset  --local-dir $HF_HOME/hub/$DATASET_REPO
+hf download $DATASET_REPO --repo-type dataset  --local-dir $HF_HOME/lerobot/$DATASET_REPO
