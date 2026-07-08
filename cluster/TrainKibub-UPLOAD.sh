@@ -32,6 +32,6 @@ export HF_USER=$(hf auth whoami | awk -F': ' '/user:/ {print $2}')
 
 echo HF_USER $HF_USER
 
-hf upload ${HF_USER}/${MODEL_REPO} $OUTPUT_DIR . --repo-type model
+hf upload ${HF_USER}/${MODEL_REPO} $OUTPUT_DIR/checkpoints/last/pretrained_model . --repo-type model
 
 echo "Finished uploading the model to Huggingface."

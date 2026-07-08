@@ -428,7 +428,7 @@ Download complete: 100%|█| 394M/394M [00:06<00:00, 1✓ Downloaded
 Download complete: 100%|█| 394M/394M [00:06<00:00, 6
 ```
 
-6. Run `mkdir -p $BIGWORK/lerobot-run; cd $BIGWORK/lerobot-run` 
+6. Run `mkdir -p $BIGWORK/lerobot-run; cd $BIGWORK/lerobot-run` to make the lerobot-run dir (do nothing if the directory already exists) and change dir into lerobot-run/.
 
 7. Run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This script, which will be queued and executed by SLURM, internally runs the command `sbatch <passes any SLURM directives> ./$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-RUN.sh`. This step assumes you have already ran TrainKibub-DOWNLOAD.sh, and then computes your job. (NOTE: ensure you ran `chmod a+x $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-*` to avoid a permissions denied error on running the script)
  
@@ -469,7 +469,96 @@ cat lerobot-train_${JOB_ID}.err
 ls $OUTPUT_DIR 
 ```
 
-10. Finally, you can upload your dataset to Huggingface. It is likely that you would close your terminal session in the many hours that the job would be running, so SSH back into the Login node and run `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-UPLOAD.sh`
+Example:
+
+Example output of successful training in lerobot-train*.err:
+```
+nhkwcaio@login01:/bigwork/nhkwcaio/lerobot-run$ cat lerobot-train_751*.err
+Module for Miniforge3, version 25.3.0-3 loaded
+INFO 2026-07-07 15:20:21 ot_train.py:213
+...
+
+...
+INFO 2026-07-07 19:39:56 ot_train.py:489 step:20K smpl:79K ep:132 epch:6.96 loss:0.025 grdn:0.806 lr:1.0e-05 updt_s:0.265 data_s:0.217
+INFO 2026-07-07 19:41:34 ot_train.py:489 step:20K smpl:80K ep:134 epch:7.03 loss:0.029 grdn:0.837 lr:1.0e-05 updt_s:0.266 data_s:0.227
+INFO 2026-07-07 19:41:34 ot_train.py:503 Checkpoint policy after step 20000
+INFO 2026-07-07 19:41:51 ot_train.py:577 End of training
+```
+
+Example output of succesful training in lerobot-train*.out:
+```
+DATASET_REPO oliveoil8888/pick-up-cube
+TASK Pick up the cube.
+STEPS 20000
+BATCH_SIZE 4
+MODEL_REPO pick-up-cube-model
+SLURM_TIME 05:00:00
+OUTPUT_DIR /bigwork/nhkwcaio/lerobot-run/outputs/train/groot-pick-up-cube-model
+HF_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface
+HF_LEROBOT_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/lerobot
+[GROOT] Flash Attention version: 2.8.3.post1
+Loading pretrained dual brain from /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/hub/models--nvidia--GR00T-N1.5-3B
+Tune backbone vision tower: False
+Tune backbone LLM: False
+Tune action head projector: True
+Tune action head DiT: True
+Model not found or avail in the huggingface hub. Loading from local path: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/hub/models--nvidia--GR00T-N1.5-3B
+[GROOT] Copying vendor Eagle files to cache: /software/NHKW25031/nhkwcaio/lerobot/src/lerobot/policies/groot/eagle2_hg_model -> /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/lerobot/lerobot/eagle2hg-processor-groot-n1p5
+[GROOT] Assets repo: lerobot/eagle2hg-processor-groot-n1p5 
+ Cache dir: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/lerobot/lerobot/eagle2hg-processor-groot-n1p5
+Tune backbone llm: False
+Tune backbone visual: True
+Total number of DiT parameters:  550386688
+Total number of SelfAttentionTransformer parameters:  201433088
+Tune action head projector: True
+Tune action head diffusion model: True
+Tune backbone llm: False
+Tune backbone visual: False
+Warning: No backbone trainable parameters found.
+Tune action head projector: True
+Tune action head diffusion model: True
+DATASET_REPO oliveoil8888/pick-up-cup-right-jul7
+TASK Pick up the cup.
+STEPS 20000
+BATCH_SIZE 4
+MODEL_REPO pick-up-cup-right-model
+SLURM_TIME 05:00:00
+OUTPUT_DIR /bigwork/nhkwcaio/lerobot-run/outputs/train/groot-pick-up-cup-right-model
+HF_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface
+HF_LEROBOT_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/lerobot
+[GROOT] Flash Attention version: 2.8.3.post1
+Loading pretrained dual brain from /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/hub/models--nvidia--GR00T-N1.5-3B
+Tune backbone vision tower: False
+Tune backbone LLM: False
+Tune action head projector: True
+Tune action head DiT: True
+Model not found or avail in the huggingface hub. Loading from local path: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/hub/models--nvidia--GR00T-N1.5-3B
+[GROOT] Copying vendor Eagle files to cache: /software/NHKW25031/nhkwcaio/lerobot/src/lerobot/policies/groot/eagle2_hg_model -> /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/lerobot/lerobot/eagle2hg-processor-groot-n1p5
+[GROOT] Assets repo: lerobot/eagle2hg-processor-groot-n1p5 
+ Cache dir: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/lerobot/lerobot/eagle2hg-processor-groot-n1p5
+Tune backbone llm: False
+Tune backbone visual: True
+Total number of DiT parameters:  550386688
+Total number of SelfAttentionTransformer parameters:  201433088
+Tune action head projector: True
+Tune action head diffusion model: True
+Tune backbone llm: False
+Tune backbone visual: False
+Warning: No backbone trainable parameters found.
+Tune action head projector: True
+Tune action head diffusion model: True
+```
+
+
+10. Finally, you can upload your dataset to Huggingface. It is likely that you would close your terminal session in the many hours that the job would be running, so SSH back into the Login node and execute the upload script `chmod a+x $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-*; $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-UPLOAD.sh`. If you ran multiple cluster jobs one after the other, you ought to have multiple different file versions of `$SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh`. In this case, you can run the following:
+      1. First, copy the contents of the VARS file you need.
+      2. SSH into the cluster Login node.
+      2. Run `nano $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-VARS.sh`
+      3. Hold `Ctrl+K` to clear each line. Clear all text from the file.
+      4. Use `Ctrl+Shift+V` to paste in the copied VARS file content
+      5. Use `Ctrl+X` and then `y` to exit and save the file
+      6. Then simply run `chmod a+x $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-*; $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-UPLOAD.sh` to set executable permissions and run the UPLOAD script, which reads the new VARS file.
+
 
 Example:
 ```

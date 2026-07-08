@@ -482,5 +482,29 @@ The following steps should be all you need to run the agent if the Client and Se
 ### Flash-attn not installing
 - Install all packages first and flash-attn last (flash-attn needs to install against pre-existing packages)
 
+### Feetech servos failure 
+
+Error:
+```
+RuntimeError: FeetechMotorsBus motor check failed on port '/dev/follower_left':
+
+Missing motor IDs:
+  - 1 (expected model: 777)
+  - 2 (expected model: 777)
+  - 3 (expected model: 777)
+  - 4 (expected model: 777)
+  - 5 (expected model: 777)
+  - 6 (expected model: 777)
+
+Full expected motor list (id: model_number):
+{1: 777, 2: 777, 3: 777, 4: 777, 5: 777, 6: 777}
+
+Full found motor list (id: model_number):
+{}
+```
+
+Solution:
+- Check connection of the arms. Note that the code checks left arm first. Ensure the arms are both powered and plugged into the computer.
+
 
 --- END OF README.md ---
