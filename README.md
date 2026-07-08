@@ -504,7 +504,9 @@ Full found motor list (id: model_number):
 ```
 
 Solution:
-- Check connection of the arms. Note that the code checks left arm first. Ensure the arms are both powered and plugged into the computer.
+- Check connection of the arms. Note that the code checks left arm first. Ensure the arms are both powered sufficiently by wall or battery, and that the USB connection is plugged into the computer.
 
+### Model upload failure
+- Ensure you upload via  `hf upload ${HF_USER}/${MODEL_REPO} $OUTPUT_DIR/checkpoints/last/pretrained_model . --repo-type model` and not `hf upload ${HF_USER}/${MODEL_REPO} $OUTPUT_DIR --repo-type model`. You should only see 7 files hashed and uploaded and not any more than that; upload the pretrained model, not the entire folder.
 
 --- END OF README.md ---

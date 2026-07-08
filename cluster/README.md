@@ -562,34 +562,29 @@ Tune action head diffusion model: True
 
 Example:
 ```
-(lerobot) nhkwcaio@login02:/software/NHKW25031/nhkwcaio/agent-kibub/cluster$ ./TrainKibub-UPLOAD.sh 
+(lerobot) nhkwcaio@login01:/software/NHKW25031/nhkwcaio/agent-kibub$ chmod a+x $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-*; $SOFTWARE/$USER/agent-kibub/cluster/TrainKibub-UPLOAD.sh
 Executing script TrainKibub-UPLOAD.sh
 This script is used for uploading your trained model to Huggingface. Run this script on the Login node.
 Ensure you are logged into Huggingface, and that you have exported REPO and POLICY beforehand.
-Module for Miniforge3, version 25.3.0-3 unloaded
 Module for Miniforge3, version 25.3.0-3 loaded
+DATASET_REPO oliveoil8888/pick-up-cup-right-jul7
+TASK Pick up the cup.
+STEPS 20000
+BATCH_SIZE 4
+MODEL_REPO pick-up-cup-right-model
+SLURM_TIME 05:00:00
+OUTPUT_DIR /bigwork/nhkwcaio/lerobot-run/outputs/train/groot-pick-up-cup-right-model
+HF_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface
+HF_LEROBOT_HOME: /bigwork/nhkwcaio/lerobot-run/.cache/huggingface/lerobot
 User is already logged in. Use `hf auth login --force` to force re-login.
 HF_USER oliveoil8888
-DATASET_REPO oliveoil8888/pick-place-cube-cup-1
-TASK Pick up the cube and place it in the cup.
-HF_USER oliveoil8888
-STEPS 50000
-BATCH_SIZE 4
-MODEL_REPO pick-up-cup-jun28-1
-SLURM_TIME 08.00.00
-OUTPUT_DIR /bigwork/nhkwcaio/lerobot-run/outputs/train/groot-pick-up-cup-jun28-1
-Start hashing 12 files.
-Finished hashing 12 files.
-Processing Files (5 / 5)      : 100%|█| 9.72GB / 9.7
-New Data Upload               : 100%|█| 5.07GB / 5.0
-  ...timizer_state.safetensors: 100%|█| 4.28GB / 4.2
-  ...d_model/model.safetensors: 100%|█| 5.45GB / 5.4
-  ...ate/rng_state.safetensors: 100%|█| 15.7kB / 15.
-  ...ack_inputs_v3.safetensors: 100%|█| 11.9kB / 11.
-  ...nnormalize_v1.safetensors: 100%|█| 11.9kB / 11.
-✓ Uploaded
-  url: https://huggingface.co/oliveoil8888/pick-up-cup-jun28-1/commit/aa596fc3f9f9b6790a23b0d2ef49d40265bbd544
-Finished uploading the model to Huggingface.
+Start hashing 7 files.
+Finished hashing 7 files.
+Processing Files (3 / 3)      : 100%|████████████████████████████████████████████████████████████████████████████████████████████| 5.45GB / 5.45GB,  308MB/s  
+New Data Upload               : |                                                                                                |  0.00B /  0.00B,  0.00B/s  
+  ...nnormalize_v1.safetensors: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 10.7kB / 10.7kB            
+  ...d_model/model.safetensors: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 5.45GB / 5.45GB            
+  ...ack_inputs_v3.safetensors: 100%|████████████████████████████████████████████████████████████████████████████████████████████| 10.7kB / 10.7kB    
 ```
 
 ## Cleaning up

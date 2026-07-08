@@ -32,6 +32,12 @@ export HF_USER=$(hf auth whoami | awk -F': ' '/user:/ {print $2}')
 
 echo HF_USER $HF_USER
 
+# Sanitize base_model_path before publishing (strip cluster-local snapshot path)
+CONFIG_PATH="$OUTPUT_DIR/checkpoints/last/pretrained_model/config.json"
+if [ -f "$CONFIG_PATH" ]; then
+  sed -i 's#"base_model_path": ".*"#"base_model_path": "nvidia/GR00T-N1.5-3B"#' "$CONFIG_PATH"
+fi
+
 hf upload ${HF_USER}/${MODEL_REPO} $OUTPUT_DIR/checkpoints/last/pretrained_model . --repo-type model
 
 echo "Finished uploading the model to Huggingface."
