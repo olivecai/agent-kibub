@@ -509,4 +509,25 @@ Solution:
 ### Model upload failure
 - Ensure you upload via  `hf upload ${HF_USER}/${MODEL_REPO} $OUTPUT_DIR/checkpoints/last/pretrained_model . --repo-type model` and not `hf upload ${HF_USER}/${MODEL_REPO} $OUTPUT_DIR --repo-type model`. You should only see 7 files hashed and uploaded and not any more than that; upload the pretrained model, not the entire folder.
 
+## Notes + Observations from Olivia
+
+### Training
+
+#### Parameters
+- Recommend 30-50 observations and 20k steps. Below is the RANKED order of Pick-up-cup performances, with 1. as best. 
+obs == number of observations aka datapoints
+steps == number of steps during training
+recoveries == for instance, dropping cup and picking back up or reaching too far into cup and then resetting 
+cameras == which cameras were used; neck camera suffers from occlusions but is conveniently attached to the mobile robot, while inconveniently non-mobile overhead camera is unsurprisingly best to include for VLA training
+
+1. obs=30, steps=30k, recoveries=true, cameras={wrists, neck, overhead} // good wrist orientation for most cup angles except one specific angle, indicating weaker generalization; moved slowly and hesitated above the cup handle but could pick up and hold the cup well, and would return to home position in the absense of a cup. i think that this poliocy would have improved with more observations?
+2. obs=50, steps=20k, recoveries=true, cameras={wrists, neck} // excellent generalization to any cup angle (re-orients immediately and accurately) and could pick up the cup in most cases but it was a bit too eager and thus often put itself in subpar positions (probably because it suffered from occlusions since the overhead camera was ommited); it *was* capable of recovering, but took some time to do so. overall this model's greatest downfall is its poor accuracy.
+3. obs=20, steps=20k, recoveries=true, cameras={wrists, neck} // good generalization to most cup angles though some failed, picked up cup if ideal position but took a longer time, but more or less was neither successful nor impressive
+4. obs=50, steps=30k, recoveries=false, cameras={wrists, neck} // arm would get stuck if the gripper was inside the actual hollow of the cup because did not know how to recover, very unsuccessful but smooth and not jerky (trained only on ideal observations)
+5. ^ finetuned off of the above model with 20 demonstrations of recoveries+ideal+coins in the cup, and i think the neck camera angle was also different, and the result was an extremely violent, jerky model
+
+#### 
+
 --- END OF README.md ---
+
+http://127.0.0.1:8001/images/wrist_right
